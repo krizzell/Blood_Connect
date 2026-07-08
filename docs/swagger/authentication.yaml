@@ -1,0 +1,916 @@
+openapi: 3.0.3
+
+info:
+  title: BloodConnect Authentication API
+  description: |
+    API contract for the BloodConnect Authentication module.
+
+    This specification is intended as the shared contract for Backend,
+    Flutter, and Postman before backend implementation begins.
+  version: 1.0.0
+  contact:
+    name: BloodConnect API Team
+  license:
+    name: Proprietary
+    url: https://bloodconnect.id/license
+
+servers:
+  - url: /api/v1
+    description: Base API path
+
+tags:
+  - name: Authentication
+    description: Register, login, logout, profile, password, and token operations.
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: |
+        Creates a new BloodConnect user account.
+
+        Email and phone must be unique. Password must contain at least 8 characters.
+      operationId: registerUser
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/RegisterRequestBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/RegisterSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticates a user using email and password, then returns JWT tokens and profile data.
+      operationId: loginUser
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/LoginSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout current user
+      description: Invalidates the current authenticated session or token on the server side.
+      operationId: logoutUser
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/LogoutSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get authenticated user profile
+      description: Returns the profile of the currently authenticated user.
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/ProfileSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/change-password:
+    patch:
+      tags:
+        - Authentication
+      summary: Change authenticated user password
+      description: |
+        Changes the password of the currently authenticated user.
+
+        The old password must match the current password. The new password and
+        confirmation password must be identical.
+      operationId: changePassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/ChangePasswordRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/ChangePasswordSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: |
+        Issues a new access token using a valid refresh token.
+
+        This endpoint is optional and should be implemented only if BloodConnect
+        uses short-lived access tokens with refresh token rotation.
+      operationId: refreshToken
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/RefreshTokenRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/RefreshTokenSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT access token using the Authorization header.
+        Example: `Authorization: Bearer eyJhbGciOiJIUzI1NiIs...`
+
+  requestBodies:
+    RegisterRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegisterRequest"
+          examples:
+            valid:
+              summary: Valid register payload
+              value:
+                full_name: Andi Pratama
+                email: andi.pratama@example.com
+                password: strongpass123
+                phone: "081234567890"
+                gender: Male
+                birth_date: "1995-08-17"
+                blood_type: O
+                rhesus: "+"
+                weight: 68
+                last_donor_date: "2026-01-15"
+                latitude: -6.200000
+                longitude: 106.816666
+                profile_photo: https://cdn.example.com/profiles/andi.jpg
+
+    LoginRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginRequest"
+          examples:
+            valid:
+              summary: Valid login payload
+              value:
+                email: andi.pratama@example.com
+                password: strongpass123
+
+    ChangePasswordRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChangePasswordRequest"
+          examples:
+            valid:
+              summary: Valid change password payload
+              value:
+                old_password: strongpass123
+                new_password: newstrongpass123
+                confirm_password: newstrongpass123
+
+    RefreshTokenRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RefreshTokenRequest"
+          examples:
+            valid:
+              summary: Valid refresh token payload
+              value:
+                refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.signature
+
+  responses:
+    RegisterSuccess:
+      description: User registered successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/RegisterSuccessExample"
+
+    LoginSuccess:
+      description: User logged in successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/LoginResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/LoginSuccessExample"
+
+    LogoutSuccess:
+      description: User logged out successfully.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SuccessResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/LogoutSuccessExample"
+
+    ProfileSuccess:
+      description: User profile retrieved successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/ProfileSuccessExample"
+
+    ChangePasswordSuccess:
+      description: Password changed successfully.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SuccessResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/ChangePasswordSuccessExample"
+
+    RefreshTokenSuccess:
+      description: Access token refreshed successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - access_token
+                      - token_type
+                      - expires_in
+                    properties:
+                      access_token:
+                        type: string
+                        description: New JWT access token.
+                      refresh_token:
+                        type: string
+                        nullable: true
+                        description: New refresh token if token rotation is enabled.
+                      token_type:
+                        type: string
+                        example: Bearer
+                      expires_in:
+                        type: integer
+                        format: int32
+                        description: Access token lifetime in seconds.
+                        example: 3600
+          examples:
+            success:
+              $ref: "#/components/examples/RefreshTokenSuccessExample"
+
+    BadRequest:
+      description: Bad request due to malformed JSON or invalid request format.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            badRequest:
+              $ref: "#/components/examples/BadRequestExample"
+
+    Unauthorized:
+      description: Authentication failed or token is missing, invalid, or expired.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            unauthorized:
+              $ref: "#/components/examples/UnauthorizedExample"
+
+    Forbidden:
+      description: Authenticated user does not have permission to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            forbidden:
+              $ref: "#/components/examples/ForbiddenExample"
+
+    NotFound:
+      description: Requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notFound:
+              $ref: "#/components/examples/NotFoundExample"
+
+    Conflict:
+      description: Request conflicts with existing data, such as duplicate email or phone.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            conflict:
+              $ref: "#/components/examples/ConflictExample"
+
+    ValidationError:
+      description: Request validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrorResponse"
+          examples:
+            validationError:
+              $ref: "#/components/examples/ValidationErrorExample"
+
+    InternalServerError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            internalServerError:
+              $ref: "#/components/examples/InternalServerErrorExample"
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - full_name
+        - email
+        - password
+        - phone
+        - blood_type
+        - rhesus
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Andi Pratama
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          example: andi.pratama@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 255
+          writeOnly: true
+          example: strongpass123
+        phone:
+          type: string
+          maxLength: 20
+          example: "081234567890"
+        gender:
+          type: string
+          enum:
+            - Male
+            - Female
+          nullable: true
+          example: Male
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          example: "1995-08-17"
+        blood_type:
+          type: string
+          enum:
+            - A
+            - B
+            - AB
+            - O
+          example: O
+        rhesus:
+          type: string
+          enum:
+            - "+"
+            - "-"
+          example: "+"
+        weight:
+          type: integer
+          format: int32
+          minimum: 1
+          nullable: true
+          example: 68
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+          example: "2026-01-15"
+        latitude:
+          type: number
+          format: double
+          nullable: true
+          example: -6.200000
+        longitude:
+          type: number
+          format: double
+          nullable: true
+          example: 106.816666
+        profile_photo:
+          type: string
+          format: uri
+          nullable: true
+          example: https://cdn.example.com/profiles/andi.jpg
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: andi.pratama@example.com
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          example: strongpass123
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - old_password
+        - new_password
+        - confirm_password
+      properties:
+        old_password:
+          type: string
+          format: password
+          writeOnly: true
+          example: strongpass123
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+          example: newstrongpass123
+        confirm_password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+          example: newstrongpass123
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.signature
+
+    UserResponse:
+      type: object
+      required:
+        - id
+        - full_name
+        - email
+        - phone
+        - gender
+        - birth_date
+        - blood_type
+        - rhesus
+        - weight
+        - is_available
+        - is_verified
+        - is_active
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        full_name:
+          type: string
+          example: Andi Pratama
+        email:
+          type: string
+          format: email
+          example: andi.pratama@example.com
+        phone:
+          type: string
+          example: "081234567890"
+        gender:
+          type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+        birth_date:
+          type: string
+          format: date
+          example: "1995-08-17"
+        blood_type:
+          type: string
+          enum:
+            - A
+            - B
+            - AB
+            - O
+          example: O
+        rhesus:
+          type: string
+          enum:
+            - "+"
+            - "-"
+          example: "+"
+        weight:
+          type: integer
+          format: int32
+          example: 68
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+          example: "2026-01-15"
+        latitude:
+          type: number
+          format: double
+          nullable: true
+          example: -6.200000
+        longitude:
+          type: number
+          format: double
+          nullable: true
+          example: 106.816666
+        profile_photo:
+          type: string
+          format: uri
+          nullable: true
+          example: https://cdn.example.com/profiles/andi.jpg
+        is_available:
+          type: boolean
+          example: true
+        is_verified:
+          type: boolean
+          example: false
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-07-09T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2026-07-09T10:00:00Z"
+
+    LoginResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - user
+      properties:
+        access_token:
+          type: string
+          description: JWT access token.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.access.signature
+        refresh_token:
+          type: string
+          nullable: true
+          description: Refresh token if refresh-token flow is enabled.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.signature
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          format: int32
+          description: Access token lifetime in seconds.
+          example: 3600
+        user:
+          $ref: "#/components/schemas/UserResponse"
+
+    SuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Operation completed successfully
+        data:
+          type: object
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - errors
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Request failed
+        errors:
+          type: object
+          nullable: true
+          additionalProperties: true
+          example: {}
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - errors
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Validation failed
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            email:
+              - Email is required
+            password:
+              - Password must be at least 8 characters
+
+  examples:
+    RegisterSuccessExample:
+      summary: 201 Created
+      value:
+        success: true
+        message: User registered successfully
+        data:
+          id: 550e8400-e29b-41d4-a716-446655440000
+          full_name: Andi Pratama
+          email: andi.pratama@example.com
+          phone: "081234567890"
+          gender: Male
+          birth_date: "1995-08-17"
+          blood_type: O
+          rhesus: "+"
+          weight: 68
+          last_donor_date: "2026-01-15"
+          latitude: -6.200000
+          longitude: 106.816666
+          profile_photo: https://cdn.example.com/profiles/andi.jpg
+          is_available: true
+          is_verified: false
+          is_active: true
+          created_at: "2026-07-09T10:00:00Z"
+          updated_at: "2026-07-09T10:00:00Z"
+
+    LoginSuccessExample:
+      summary: 200 OK
+      value:
+        success: true
+        message: Login successful
+        data:
+          access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.access.signature
+          refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.signature
+          token_type: Bearer
+          expires_in: 3600
+          user:
+            id: 550e8400-e29b-41d4-a716-446655440000
+            full_name: Andi Pratama
+            email: andi.pratama@example.com
+            phone: "081234567890"
+            gender: Male
+            birth_date: "1995-08-17"
+            blood_type: O
+            rhesus: "+"
+            weight: 68
+            last_donor_date: "2026-01-15"
+            latitude: -6.200000
+            longitude: 106.816666
+            profile_photo: https://cdn.example.com/profiles/andi.jpg
+            is_available: true
+            is_verified: false
+            is_active: true
+            created_at: "2026-07-09T10:00:00Z"
+            updated_at: "2026-07-09T10:00:00Z"
+
+    LogoutSuccessExample:
+      summary: 200 OK
+      value:
+        success: true
+        message: Logout successful
+        data: {}
+
+    ProfileSuccessExample:
+      summary: 200 OK
+      value:
+        success: true
+        message: Profile retrieved successfully
+        data:
+          id: 550e8400-e29b-41d4-a716-446655440000
+          full_name: Andi Pratama
+          email: andi.pratama@example.com
+          phone: "081234567890"
+          gender: Male
+          birth_date: "1995-08-17"
+          blood_type: O
+          rhesus: "+"
+          weight: 68
+          last_donor_date: "2026-01-15"
+          latitude: -6.200000
+          longitude: 106.816666
+          profile_photo: https://cdn.example.com/profiles/andi.jpg
+          is_available: true
+          is_verified: false
+          is_active: true
+          created_at: "2026-07-09T10:00:00Z"
+          updated_at: "2026-07-09T10:00:00Z"
+
+    ChangePasswordSuccessExample:
+      summary: 200 OK
+      value:
+        success: true
+        message: Password changed successfully
+        data: {}
+
+    RefreshTokenSuccessExample:
+      summary: 200 OK
+      value:
+        success: true
+        message: Token refreshed successfully
+        data:
+          access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.newAccess.signature
+          refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.newRefresh.signature
+          token_type: Bearer
+          expires_in: 3600
+
+    BadRequestExample:
+      summary: 400 Bad Request
+      value:
+        success: false
+        message: Invalid request body
+        errors:
+          body:
+            - Request body must be valid JSON
+
+    UnauthorizedExample:
+      summary: 401 Unauthorized
+      value:
+        success: false
+        message: Unauthorized
+        errors:
+          token:
+            - Token is missing, invalid, or expired
+
+    ForbiddenExample:
+      summary: 403 Forbidden
+      value:
+        success: false
+        message: Access forbidden
+        errors:
+          authorization:
+            - You do not have permission to access this resource
+
+    NotFoundExample:
+      summary: 404 Not Found
+      value:
+        success: false
+        message: Resource not found
+        errors:
+          resource:
+            - The requested user profile was not found
+
+    ConflictExample:
+      summary: 409 Conflict
+      value:
+        success: false
+        message: Data already exists
+        errors:
+          email:
+            - Email is already registered
+          phone:
+            - Phone number is already registered
+
+    ValidationErrorExample:
+      summary: 422 Unprocessable Entity
+      value:
+        success: false
+        message: Validation failed
+        errors:
+          full_name:
+            - Full name is required
+          email:
+            - Email is required
+            - Email must be a valid email address
+          password:
+            - Password must be at least 8 characters
+          blood_type:
+            - Blood type is required
+          rhesus:
+            - Rhesus is required
+
+    InternalServerErrorExample:
+      summary: 500 Internal Server Error
+      value:
+        success: false
+        message: Internal server error
+        errors:
+          server:
+            - An unexpected error occurred

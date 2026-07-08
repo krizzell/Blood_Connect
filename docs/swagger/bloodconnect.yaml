@@ -1,0 +1,2235 @@
+openapi: 3.0.3
+
+info:
+  title: BloodConnect API
+  description: |
+    API-first contract for BloodConnect REST API.
+
+    This document is the shared source of truth for Backend, Flutter, Postman,
+    Swagger UI, and future client SDK generation.
+  version: 1.0.0
+  contact:
+    name: BloodConnect API Team
+  license:
+    name: Proprietary
+    url: https://bloodconnect.id/license
+
+servers:
+  - url: /api/v1
+    description: Base API path
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+    description: Register, login, logout, profile, password, and token operations.
+  - name: User
+    description: User profile, donor availability, and donor discovery operations.
+  - name: Blood Request
+    description: Blood request lifecycle operations.
+  - name: Screening
+    description: Donor eligibility screening operations.
+  - name: Donor Response
+    description: Donor response and request matching operations.
+  - name: Notification
+    description: User notification operations.
+  - name: Admin
+    description: Administrative monitoring and moderation operations.
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new BloodConnect user account. Email and phone must be unique.
+      operationId: registerUser
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/RegisterRequestBody"
+      responses:
+        "201":
+          description: User registered successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/UserResponse"
+              examples:
+                success:
+                  $ref: "#/components/examples/UserSuccessExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticates a user using email and password, then returns JWT tokens and profile data.
+      operationId: loginUser
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequestBody"
+      responses:
+        "200":
+          description: User logged in successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/LoginResponse"
+              examples:
+                success:
+                  $ref: "#/components/examples/LoginSuccessExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout current user
+      description: Invalidates the current authenticated session or token on the server side.
+      operationId: logoutUser
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get authenticated user profile
+      description: Returns the profile of the currently authenticated user.
+      operationId: getAuthenticatedProfile
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/change-password:
+    patch:
+      tags:
+        - Authentication
+      summary: Change authenticated user password
+      description: Changes the password of the currently authenticated user.
+      operationId: changePassword
+      requestBody:
+        $ref: "#/components/requestBodies/ChangePasswordRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Issues a new access token using a valid refresh token.
+      operationId: refreshToken
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/RefreshTokenRequestBody"
+      responses:
+        "200":
+          description: Token refreshed successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/TokenResponse"
+              examples:
+                success:
+                  $ref: "#/components/examples/RefreshTokenSuccessExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/me:
+    get:
+      tags:
+        - User
+      summary: Get current user
+      description: Returns the authenticated user's complete profile.
+      operationId: getCurrentUser
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - User
+      summary: Update current user profile
+      description: Updates editable profile fields for the authenticated user.
+      operationId: updateCurrentUser
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUserRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/me/availability:
+    patch:
+      tags:
+        - User
+      summary: Update donor availability
+      description: Updates whether the authenticated user is available as a donor.
+      operationId: updateCurrentUserAvailability
+      requestBody:
+        $ref: "#/components/requestBodies/AvailabilityRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/donors:
+    get:
+      tags:
+        - User
+      summary: Search available donors
+      description: Returns available donors filtered by blood type, rhesus, location, and verification status.
+      operationId: searchAvailableDonors
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/BloodTypeParam"
+        - $ref: "#/components/parameters/RhesusParam"
+        - $ref: "#/components/parameters/LatitudeParam"
+        - $ref: "#/components/parameters/LongitudeParam"
+        - $ref: "#/components/parameters/RadiusKmParam"
+      responses:
+        "200":
+          description: Donors retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - items
+                          - pagination
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/UserResponse"
+                          pagination:
+                            $ref: "#/components/schemas/PaginationMeta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/{user_id}:
+    get:
+      tags:
+        - User
+      summary: Get user public profile
+      description: Returns public profile information for a specific user.
+      operationId: getUserById
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests:
+    get:
+      tags:
+        - Blood Request
+      summary: List blood requests
+      description: Returns blood requests visible to the authenticated user.
+      operationId: listBloodRequests
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/BloodTypeParam"
+        - $ref: "#/components/parameters/RhesusParam"
+        - $ref: "#/components/parameters/UrgencyParam"
+        - $ref: "#/components/parameters/RequestStatusParam"
+      responses:
+        "200":
+          description: Blood requests retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BloodRequestListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - Blood Request
+      summary: Create blood request
+      description: Creates a new blood request for a patient.
+      operationId: createBloodRequest
+      requestBody:
+        $ref: "#/components/requestBodies/CreateBloodRequestBody"
+      responses:
+        "201":
+          description: Blood request created successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BloodRequestResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests/{blood_request_id}:
+    get:
+      tags:
+        - Blood Request
+      summary: Get blood request detail
+      description: Returns a specific blood request including requester information.
+      operationId: getBloodRequestById
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/BloodRequestSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - Blood Request
+      summary: Update blood request
+      description: Updates an owned blood request while it is still editable.
+      operationId: updateBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateBloodRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/BloodRequestSuccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - Blood Request
+      summary: Delete blood request
+      description: Soft deletes an owned blood request.
+      operationId: deleteBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests/{blood_request_id}/cancel:
+    post:
+      tags:
+        - Blood Request
+      summary: Cancel blood request
+      description: Cancels an active blood request owned by the authenticated user.
+      operationId: cancelBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/BloodRequestSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests/{blood_request_id}/complete:
+    post:
+      tags:
+        - Blood Request
+      summary: Complete blood request
+      description: Marks a blood request as completed after donation has been fulfilled.
+      operationId: completeBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/BloodRequestSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /screenings:
+    post:
+      tags:
+        - Screening
+      summary: Submit donor screening
+      description: Submits eligibility screening answers for a donor before responding to a blood request.
+      operationId: createScreening
+      requestBody:
+        $ref: "#/components/requestBodies/CreateScreeningBody"
+      responses:
+        "201":
+          description: Screening submitted successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/ScreeningResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests/{blood_request_id}/screenings:
+    get:
+      tags:
+        - Screening
+      summary: List screenings for a blood request
+      description: Returns donor screening submissions for a specific blood request.
+      operationId: listScreeningsByBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Screenings retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/ScreeningListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /screenings/{screening_id}:
+    get:
+      tags:
+        - Screening
+      summary: Get screening detail
+      description: Returns a specific screening submission.
+      operationId: getScreeningById
+      parameters:
+        - $ref: "#/components/parameters/ScreeningIdPath"
+      responses:
+        "200":
+          description: Screening retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/ScreeningResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /donor-responses:
+    get:
+      tags:
+        - Donor Response
+      summary: List current user's donor responses
+      description: Returns donor responses created by the authenticated donor.
+      operationId: listMyDonorResponses
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/DonorResponseStatusParam"
+      responses:
+        "200":
+          description: Donor responses retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DonorResponseListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - Donor Response
+      summary: Respond to a blood request
+      description: Creates a donor response for a blood request after screening eligibility is confirmed.
+      operationId: createDonorResponse
+      requestBody:
+        $ref: "#/components/requestBodies/CreateDonorResponseBody"
+      responses:
+        "201":
+          description: Donor response created successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DonorResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /blood-requests/{blood_request_id}/donor-responses:
+    get:
+      tags:
+        - Donor Response
+      summary: List donor responses for a blood request
+      description: Returns donor responses for a specific blood request owned by the authenticated user.
+      operationId: listDonorResponsesByBloodRequest
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/DonorResponseStatusParam"
+      responses:
+        "200":
+          description: Donor responses retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/DonorResponseListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /donor-responses/{donor_response_id}/accept:
+    post:
+      tags:
+        - Donor Response
+      summary: Accept donor response
+      description: Accepts a donor response for a blood request owned by the authenticated user.
+      operationId: acceptDonorResponse
+      parameters:
+        - $ref: "#/components/parameters/DonorResponseIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/DonorResponseSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /donor-responses/{donor_response_id}/reject:
+    post:
+      tags:
+        - Donor Response
+      summary: Reject donor response
+      description: Rejects a donor response for a blood request owned by the authenticated user.
+      operationId: rejectDonorResponse
+      parameters:
+        - $ref: "#/components/parameters/DonorResponseIdPath"
+      requestBody:
+        $ref: "#/components/requestBodies/ResponseMessageBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/DonorResponseSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /donor-responses/{donor_response_id}/cancel:
+    post:
+      tags:
+        - Donor Response
+      summary: Cancel donor response
+      description: Cancels a donor response created by the authenticated donor.
+      operationId: cancelDonorResponse
+      parameters:
+        - $ref: "#/components/parameters/DonorResponseIdPath"
+      requestBody:
+        $ref: "#/components/requestBodies/ResponseMessageBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/DonorResponseSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /notifications:
+    get:
+      tags:
+        - Notification
+      summary: List notifications
+      description: Returns notifications for the authenticated user.
+      operationId: listNotifications
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: is_read
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Notifications retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/NotificationListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /notifications/{notification_id}/read:
+    patch:
+      tags:
+        - Notification
+      summary: Mark notification as read
+      description: Marks a specific notification as read.
+      operationId: markNotificationAsRead
+      parameters:
+        - $ref: "#/components/parameters/NotificationIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/NotificationSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /notifications/read-all:
+    patch:
+      tags:
+        - Notification
+      summary: Mark all notifications as read
+      description: Marks all notifications for the authenticated user as read.
+      operationId: markAllNotificationsAsRead
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /notifications/{notification_id}:
+    delete:
+      tags:
+        - Notification
+      summary: Delete notification
+      description: Soft deletes a notification owned by the authenticated user.
+      operationId: deleteNotification
+      parameters:
+        - $ref: "#/components/parameters/NotificationIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Get admin dashboard summary
+      description: Returns platform statistics for administrators.
+      operationId: getAdminDashboard
+      responses:
+        "200":
+          description: Dashboard retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AdminDashboardResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: List users for admin
+      description: Returns all users with administrative filters.
+      operationId: adminListUsers
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: is_verified
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: is_active
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Users retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required:
+                          - items
+                          - pagination
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/UserResponse"
+                          pagination:
+                            $ref: "#/components/schemas/PaginationMeta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/users/{user_id}/verify:
+    patch:
+      tags:
+        - Admin
+      summary: Verify user
+      description: Marks a user as verified.
+      operationId: adminVerifyUser
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/users/{user_id}/status:
+    patch:
+      tags:
+        - Admin
+      summary: Update user active status
+      description: Activates or deactivates a user account.
+      operationId: adminUpdateUserStatus
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      requestBody:
+        $ref: "#/components/requestBodies/AdminUserStatusBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/blood-requests:
+    get:
+      tags:
+        - Admin
+      summary: List all blood requests for admin
+      description: Returns all blood requests with administrative filters.
+      operationId: adminListBloodRequests
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/RequestStatusParam"
+        - $ref: "#/components/parameters/UrgencyParam"
+      responses:
+        "200":
+          description: Blood requests retrieved successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BloodRequestListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/blood-requests/{blood_request_id}/status:
+    patch:
+      tags:
+        - Admin
+      summary: Update blood request status
+      description: Updates a blood request status for moderation or operational correction.
+      operationId: adminUpdateBloodRequestStatus
+      parameters:
+        - $ref: "#/components/parameters/BloodRequestIdPath"
+      requestBody:
+        $ref: "#/components/requestBodies/AdminBloodRequestStatusBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/BloodRequestSuccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT access token using the Authorization header.
+        Example: `Authorization: Bearer eyJhbGciOiJIUzI1NiIs...`
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+    UserIdPath:
+      name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BloodRequestIdPath:
+      name: blood_request_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ScreeningIdPath:
+      name: screening_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    DonorResponseIdPath:
+      name: donor_response_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    NotificationIdPath:
+      name: notification_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BloodTypeParam:
+      name: blood_type
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/BloodType"
+    RhesusParam:
+      name: rhesus
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/Rhesus"
+    UrgencyParam:
+      name: urgency
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/Urgency"
+    RequestStatusParam:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/RequestStatus"
+    DonorResponseStatusParam:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/DonorResponseStatus"
+    LatitudeParam:
+      name: latitude
+      in: query
+      required: false
+      schema:
+        type: number
+        format: double
+        minimum: -90
+        maximum: 90
+    LongitudeParam:
+      name: longitude
+      in: query
+      required: false
+      schema:
+        type: number
+        format: double
+        minimum: -180
+        maximum: 180
+    RadiusKmParam:
+      name: radius_km
+      in: query
+      required: false
+      schema:
+        type: number
+        format: double
+        minimum: 1
+        maximum: 100
+        default: 10
+
+  requestBodies:
+    RegisterRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegisterRequest"
+          examples:
+            valid:
+              $ref: "#/components/examples/RegisterRequestExample"
+    LoginRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginRequest"
+    ChangePasswordRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChangePasswordRequest"
+    RefreshTokenRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RefreshTokenRequest"
+    UpdateUserRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateUserRequest"
+    AvailabilityRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AvailabilityRequest"
+    CreateBloodRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateBloodRequest"
+    UpdateBloodRequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateBloodRequest"
+    CreateScreeningBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateScreeningRequest"
+    CreateDonorResponseBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateDonorResponseRequest"
+    ResponseMessageBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseMessageRequest"
+    AdminUserStatusBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AdminUserStatusRequest"
+    AdminBloodRequestStatusBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AdminBloodRequestStatusRequest"
+
+  responses:
+    EmptySuccess:
+      description: Operation completed successfully.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SuccessResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/EmptySuccessExample"
+    UserSuccess:
+      description: User retrieved successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+          examples:
+            success:
+              $ref: "#/components/examples/UserSuccessExample"
+    BloodRequestSuccess:
+      description: Blood request retrieved successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/BloodRequestResponse"
+    DonorResponseSuccess:
+      description: Donor response retrieved successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/DonorResponse"
+    NotificationSuccess:
+      description: Notification retrieved successfully.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/SuccessResponse"
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NotificationResponse"
+    BadRequest:
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            badRequest:
+              $ref: "#/components/examples/BadRequestExample"
+    Unauthorized:
+      description: Unauthorized request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            unauthorized:
+              $ref: "#/components/examples/UnauthorizedExample"
+    Forbidden:
+      description: Forbidden request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            forbidden:
+              $ref: "#/components/examples/ForbiddenExample"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notFound:
+              $ref: "#/components/examples/NotFoundExample"
+    Conflict:
+      description: Request conflicts with current resource state.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            conflict:
+              $ref: "#/components/examples/ConflictExample"
+    ValidationError:
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrorResponse"
+          examples:
+            validationError:
+              $ref: "#/components/examples/ValidationErrorExample"
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            internalServerError:
+              $ref: "#/components/examples/InternalServerErrorExample"
+
+  schemas:
+    Gender:
+      type: string
+      enum:
+        - Male
+        - Female
+    BloodType:
+      type: string
+      enum:
+        - A
+        - B
+        - AB
+        - O
+    Rhesus:
+      type: string
+      enum:
+        - "+"
+        - "-"
+    Urgency:
+      type: string
+      enum:
+        - Low
+        - Medium
+        - High
+        - Critical
+    RequestStatus:
+      type: string
+      enum:
+        - Pending
+        - Searching
+        - Donor Found
+        - Completed
+        - Cancelled
+    DonorResponseStatus:
+      type: string
+      enum:
+        - Waiting
+        - Accepted
+        - Rejected
+        - Completed
+        - Cancelled
+    NotificationType:
+      type: string
+      enum:
+        - General
+        - New Request
+        - Donor Accepted
+        - Request Completed
+        - Reminder
+
+    RegisterRequest:
+      type: object
+      required:
+        - full_name
+        - email
+        - password
+        - phone
+        - blood_type
+        - rhesus
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 255
+          writeOnly: true
+        phone:
+          type: string
+          maxLength: 20
+        gender:
+          $ref: "#/components/schemas/Gender"
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+        blood_type:
+          $ref: "#/components/schemas/BloodType"
+        rhesus:
+          $ref: "#/components/schemas/Rhesus"
+        weight:
+          type: integer
+          nullable: true
+          minimum: 1
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longitude:
+          type: number
+          format: double
+          nullable: true
+        profile_photo:
+          type: string
+          format: uri
+          nullable: true
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          writeOnly: true
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - old_password
+        - new_password
+        - confirm_password
+      properties:
+        old_password:
+          type: string
+          format: password
+          writeOnly: true
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+        confirm_password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        phone:
+          type: string
+          maxLength: 20
+        gender:
+          $ref: "#/components/schemas/Gender"
+        birth_date:
+          type: string
+          format: date
+        blood_type:
+          $ref: "#/components/schemas/BloodType"
+        rhesus:
+          $ref: "#/components/schemas/Rhesus"
+        weight:
+          type: integer
+          minimum: 1
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longitude:
+          type: number
+          format: double
+          nullable: true
+        profile_photo:
+          type: string
+          format: uri
+          nullable: true
+
+    AvailabilityRequest:
+      type: object
+      required:
+        - is_available
+      properties:
+        is_available:
+          type: boolean
+
+    CreateBloodRequest:
+      type: object
+      required:
+        - patient_name
+        - hospital_name
+        - hospital_address
+        - latitude
+        - longitude
+        - blood_type
+        - rhesus
+        - bags_needed
+        - urgency
+      properties:
+        patient_name:
+          type: string
+          maxLength: 100
+        relationship:
+          type: string
+          maxLength: 50
+          nullable: true
+        hospital_name:
+          type: string
+          maxLength: 150
+        hospital_address:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        blood_type:
+          $ref: "#/components/schemas/BloodType"
+        rhesus:
+          $ref: "#/components/schemas/Rhesus"
+        bags_needed:
+          type: integer
+          minimum: 1
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        note:
+          type: string
+          nullable: true
+
+    UpdateBloodRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateBloodRequest"
+
+    CreateScreeningRequest:
+      type: object
+      required:
+        - blood_request_id
+        - weight_ok
+        - healthy
+        - taking_medicine
+        - pregnant
+        - tattoo
+        - operation_history
+      properties:
+        blood_request_id:
+          type: string
+          format: uuid
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+        weight_ok:
+          type: boolean
+        healthy:
+          type: boolean
+        taking_medicine:
+          type: boolean
+        pregnant:
+          type: boolean
+        tattoo:
+          type: boolean
+        operation_history:
+          type: boolean
+
+    CreateDonorResponseRequest:
+      type: object
+      required:
+        - blood_request_id
+      properties:
+        blood_request_id:
+          type: string
+          format: uuid
+        response_message:
+          type: string
+          nullable: true
+
+    ResponseMessageRequest:
+      type: object
+      properties:
+        response_message:
+          type: string
+          nullable: true
+
+    AdminUserStatusRequest:
+      type: object
+      required:
+        - is_active
+      properties:
+        is_active:
+          type: boolean
+
+    AdminBloodRequestStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+
+    UserResponse:
+      type: object
+      required:
+        - id
+        - full_name
+        - email
+        - phone
+        - blood_type
+        - rhesus
+        - is_available
+        - is_verified
+        - is_active
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          example: Andi Pratama
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        gender:
+          $ref: "#/components/schemas/Gender"
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+        blood_type:
+          $ref: "#/components/schemas/BloodType"
+        rhesus:
+          $ref: "#/components/schemas/Rhesus"
+        weight:
+          type: integer
+          nullable: true
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longitude:
+          type: number
+          format: double
+          nullable: true
+        profile_photo:
+          type: string
+          format: uri
+          nullable: true
+        is_available:
+          type: boolean
+        is_verified:
+          type: boolean
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TokenResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+          nullable: true
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 3600
+
+    LoginResponse:
+      allOf:
+        - $ref: "#/components/schemas/TokenResponse"
+        - type: object
+          required:
+            - user
+          properties:
+            user:
+              $ref: "#/components/schemas/UserResponse"
+
+    BloodRequestResponse:
+      type: object
+      required:
+        - id
+        - user_id
+        - patient_name
+        - hospital_name
+        - hospital_address
+        - latitude
+        - longitude
+        - blood_type
+        - rhesus
+        - bags_needed
+        - urgency
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        patient_name:
+          type: string
+        relationship:
+          type: string
+          nullable: true
+        hospital_name:
+          type: string
+        hospital_address:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        blood_type:
+          $ref: "#/components/schemas/BloodType"
+        rhesus:
+          $ref: "#/components/schemas/Rhesus"
+        bags_needed:
+          type: integer
+        urgency:
+          $ref: "#/components/schemas/Urgency"
+        note:
+          type: string
+          nullable: true
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        fulfilled_at:
+          type: string
+          format: date-time
+          nullable: true
+        requester:
+          $ref: "#/components/schemas/UserResponse"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    BloodRequestListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/BloodRequestResponse"
+        pagination:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    ScreeningResponse:
+      type: object
+      required:
+        - id
+        - user_id
+        - blood_request_id
+        - weight_ok
+        - healthy
+        - taking_medicine
+        - pregnant
+        - tattoo
+        - operation_history
+        - eligible
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        blood_request_id:
+          type: string
+          format: uuid
+        last_donor_date:
+          type: string
+          format: date
+          nullable: true
+        weight_ok:
+          type: boolean
+        healthy:
+          type: boolean
+        taking_medicine:
+          type: boolean
+        pregnant:
+          type: boolean
+        tattoo:
+          type: boolean
+        operation_history:
+          type: boolean
+        eligible:
+          type: boolean
+        user:
+          $ref: "#/components/schemas/UserResponse"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ScreeningListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScreeningResponse"
+        pagination:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    DonorResponse:
+      type: object
+      required:
+        - id
+        - blood_request_id
+        - donor_id
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        blood_request_id:
+          type: string
+          format: uuid
+        donor_id:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/DonorResponseStatus"
+        response_message:
+          type: string
+          nullable: true
+        accepted_at:
+          type: string
+          format: date-time
+          nullable: true
+        donor:
+          $ref: "#/components/schemas/UserResponse"
+        blood_request:
+          $ref: "#/components/schemas/BloodRequestResponse"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    DonorResponseListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DonorResponse"
+        pagination:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    NotificationResponse:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+        - message
+        - type
+        - is_read
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        message:
+          type: string
+        type:
+          $ref: "#/components/schemas/NotificationType"
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NotificationListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+        - unread_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationResponse"
+        pagination:
+          $ref: "#/components/schemas/PaginationMeta"
+        unread_count:
+          type: integer
+          example: 3
+
+    AdminDashboardResponse:
+      type: object
+      required:
+        - total_users
+        - verified_users
+        - active_users
+        - total_blood_requests
+        - pending_blood_requests
+        - completed_blood_requests
+        - total_donor_responses
+      properties:
+        total_users:
+          type: integer
+        verified_users:
+          type: integer
+        active_users:
+          type: integer
+        total_blood_requests:
+          type: integer
+        pending_blood_requests:
+          type: integer
+        completed_blood_requests:
+          type: integer
+        total_donor_responses:
+          type: integer
+
+    PaginationMeta:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - total_pages
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 42
+        total_pages:
+          type: integer
+          example: 5
+
+    SuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Operation completed successfully
+        data:
+          type: object
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - errors
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Request failed
+        errors:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - errors
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Validation failed
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  examples:
+    RegisterRequestExample:
+      summary: Register request
+      value:
+        full_name: Andi Pratama
+        email: andi.pratama@example.com
+        password: strongpass123
+        phone: "081234567890"
+        gender: Male
+        birth_date: "1995-08-17"
+        blood_type: O
+        rhesus: "+"
+        weight: 68
+        latitude: -6.2
+        longitude: 106.816666
+    UserSuccessExample:
+      summary: User response
+      value:
+        success: true
+        message: User retrieved successfully
+        data:
+          id: 550e8400-e29b-41d4-a716-446655440000
+          full_name: Andi Pratama
+          email: andi.pratama@example.com
+          phone: "081234567890"
+          gender: Male
+          birth_date: "1995-08-17"
+          blood_type: O
+          rhesus: "+"
+          weight: 68
+          last_donor_date: "2026-01-15"
+          latitude: -6.2
+          longitude: 106.816666
+          profile_photo: https://cdn.example.com/profiles/andi.jpg
+          is_available: true
+          is_verified: false
+          is_active: true
+          created_at: "2026-07-09T10:00:00Z"
+          updated_at: "2026-07-09T10:00:00Z"
+    LoginSuccessExample:
+      summary: Login response
+      value:
+        success: true
+        message: Login successful
+        data:
+          access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.access.signature
+          refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.signature
+          token_type: Bearer
+          expires_in: 3600
+          user:
+            id: 550e8400-e29b-41d4-a716-446655440000
+            full_name: Andi Pratama
+            email: andi.pratama@example.com
+            phone: "081234567890"
+            blood_type: O
+            rhesus: "+"
+            is_available: true
+            is_verified: false
+            is_active: true
+            created_at: "2026-07-09T10:00:00Z"
+            updated_at: "2026-07-09T10:00:00Z"
+    RefreshTokenSuccessExample:
+      summary: Refresh token response
+      value:
+        success: true
+        message: Token refreshed successfully
+        data:
+          access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.newAccess.signature
+          refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.newRefresh.signature
+          token_type: Bearer
+          expires_in: 3600
+    EmptySuccessExample:
+      summary: Empty success response
+      value:
+        success: true
+        message: Operation completed successfully
+        data: {}
+    BadRequestExample:
+      summary: 400 Bad Request
+      value:
+        success: false
+        message: Invalid request body
+        errors:
+          body:
+            - Request body must be valid JSON
+    UnauthorizedExample:
+      summary: 401 Unauthorized
+      value:
+        success: false
+        message: Unauthorized
+        errors:
+          token:
+            - Token is missing, invalid, or expired
+    ForbiddenExample:
+      summary: 403 Forbidden
+      value:
+        success: false
+        message: Access forbidden
+        errors:
+          authorization:
+            - You do not have permission to access this resource
+    NotFoundExample:
+      summary: 404 Not Found
+      value:
+        success: false
+        message: Resource not found
+        errors:
+          resource:
+            - The requested resource was not found
+    ConflictExample:
+      summary: 409 Conflict
+      value:
+        success: false
+        message: Resource conflict
+        errors:
+          conflict:
+            - The requested operation conflicts with the current resource state
+    ValidationErrorExample:
+      summary: 422 Unprocessable Entity
+      value:
+        success: false
+        message: Validation failed
+        errors:
+          email:
+            - Email is required
+          password:
+            - Password must be at least 8 characters
+    InternalServerErrorExample:
+      summary: 500 Internal Server Error
+      value:
+        success: false
+        message: Internal server error
+        errors:
+          server:
+            - An unexpected error occurred
