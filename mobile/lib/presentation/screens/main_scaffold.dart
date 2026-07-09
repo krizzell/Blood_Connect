@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:blood_connect/core/config/theme/app_colors.dart';
-import 'package:blood_connect/core/config/router/app_routes.dart';
+import 'package:blood_connect/presentation/screens/blood_request/blood_request_screen.dart';
+import 'package:blood_connect/presentation/screens/explore/explore_screen.dart';
+import 'package:blood_connect/presentation/screens/home/home_screen.dart';
+import 'package:blood_connect/presentation/screens/profile/profile_screen.dart';
 
 final currentTabProvider = StateProvider<int>((ref) => 0);
 
@@ -15,41 +17,17 @@ class MainScaffold extends ConsumerWidget {
     final currentTab = ref.watch(currentTabProvider);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: _getPageForTab(currentTab),
+      body: IndexedStack(
+        index: currentTab,
+        children: const [
+          HomeScreen(),
+          BloodRequestScreen(),
+          ExploreScreen(),
+          ProfileScreen(),
+        ],
       ),
       bottomNavigationBar: _buildBottomNavigation(context, ref, currentTab),
     );
-  }
-
-  Widget _getPageForTab(int tab) {
-    switch (tab) {
-      case 0:
-        return const SizedBox(
-          height: 600,
-          child: Placeholder(),
-        ); // Home
-      case 1:
-        return const SizedBox(
-          height: 600,
-          child: Placeholder(),
-        ); // Blood Request
-      case 2:
-        return const SizedBox(
-          height: 600,
-          child: Placeholder(),
-        ); // Explore
-      case 3:
-        return const SizedBox(
-          height: 600,
-          child: Placeholder(),
-        ); // Profile
-      default:
-        return const SizedBox(
-          height: 600,
-          child: Placeholder(),
-        );
-    }
   }
 
   Widget _buildBottomNavigation(
