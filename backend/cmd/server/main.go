@@ -11,10 +11,10 @@ import (
 
 func main() {
 	cfg := config.LoadEnv()
-	_ = config.ConnectDatabase(cfg)
+	db := config.ConnectDatabase(cfg)
 
 	router := gin.Default()
-	routes.RegisterRoutes(router)
+	routes.RegisterRoutes(router, db, cfg)
 
 	if err := router.Run(fmt.Sprintf(":%s", cfg.AppPort)); err != nil {
 		panic(fmt.Sprintf("failed to start %s server: %v", cfg.AppName, err))

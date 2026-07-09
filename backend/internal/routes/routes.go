@@ -1,12 +1,18 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"bloodconnect-backend/config"
 
-func RegisterRoutes(router *gin.Engine) {
-	api := router.Group("/api")
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
 
-	AuthRoutes(api)
+func RegisterRoutes(router *gin.Engine, db *gorm.DB, cfg config.Config) {
+	api := router.Group("/api/v1")
+
+	AuthRoutes(api, db, cfg)
 	UserRoutes(api)
-	BloodRequestRoutes(api)
+	BloodRequestRoutes(api, db, cfg)
+	ScreeningRoutes(api, db, cfg)
 	NotificationRoutes(api)
 }

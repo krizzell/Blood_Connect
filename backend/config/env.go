@@ -27,7 +27,7 @@ func LoadEnv() Config {
 	return Config{
 		AppName: getEnv("APP_NAME", "BloodConnect"),
 		AppEnv:  getEnv("APP_ENV", "development"),
-		AppPort: getEnv("APP_PORT", "8080"),
+		AppPort: getEnv("APP_PORT", "8081"),
 
 		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "5432"),

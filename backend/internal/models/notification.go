@@ -6,7 +6,6 @@ import (
 	"bloodconnect-backend/internal/constants"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type Notification struct {
@@ -18,7 +17,6 @@ type Notification struct {
 	IsRead    bool                       `gorm:"not null;default:false;column:is_read" json:"is_read"`
 	CreatedAt time.Time                  `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time                  `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt gorm.DeletedAt             `gorm:"column:deleted_at;index" json:"deleted_at,omitempty"`
 
 	User User `gorm:"foreignKey:UserID;references:ID" json:"user,omitempty"`
 }

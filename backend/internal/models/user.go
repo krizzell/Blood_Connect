@@ -6,7 +6,6 @@ import (
 	"bloodconnect-backend/internal/constants"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -29,7 +28,6 @@ type User struct {
 	IsActive      bool                `gorm:"not null;default:true;column:is_active" json:"is_active"`
 	CreatedAt     time.Time           `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt     time.Time           `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt     gorm.DeletedAt      `gorm:"column:deleted_at;index" json:"deleted_at,omitempty"`
 
 	BloodRequests      []BloodRequest    `gorm:"foreignKey:UserID;references:ID" json:"blood_requests,omitempty"`
 	Screenings         []Screening       `gorm:"foreignKey:UserID;references:ID" json:"screenings,omitempty"`

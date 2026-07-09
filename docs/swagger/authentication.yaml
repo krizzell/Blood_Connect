@@ -113,7 +113,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /auth/change-password:
-    patch:
+    put:
       tags:
         - Authentication
       summary: Change authenticated user password

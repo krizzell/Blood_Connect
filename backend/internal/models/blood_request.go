@@ -6,7 +6,6 @@ import (
 	"bloodconnect-backend/internal/constants"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type BloodRequest struct {
@@ -27,7 +26,6 @@ type BloodRequest struct {
 	FulfilledAt     *time.Time              `gorm:"column:fulfilled_at" json:"fulfilled_at"`
 	CreatedAt       time.Time               `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt       time.Time               `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt       gorm.DeletedAt          `gorm:"column:deleted_at;index" json:"deleted_at,omitempty"`
 
 	User              User              `gorm:"foreignKey:UserID;references:ID" json:"user,omitempty"`
 	Screenings        []Screening       `gorm:"foreignKey:BloodRequestID;references:ID" json:"screenings,omitempty"`

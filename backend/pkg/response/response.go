@@ -41,12 +41,20 @@ func BadRequest(ctx *gin.Context, message string, errors interface{}) {
 	errorResponse(ctx, http.StatusBadRequest, message, errors)
 }
 
+func UnprocessableEntity(ctx *gin.Context, message string, errors interface{}) {
+	errorResponse(ctx, http.StatusUnprocessableEntity, message, errors)
+}
+
 func Unauthorized(ctx *gin.Context, message string, errors interface{}) {
 	errorResponse(ctx, http.StatusUnauthorized, message, errors)
 }
 
 func Forbidden(ctx *gin.Context, message string, errors interface{}) {
 	errorResponse(ctx, http.StatusForbidden, message, errors)
+}
+
+func Conflict(ctx *gin.Context, message string, errors interface{}) {
+	errorResponse(ctx, http.StatusConflict, message, errors)
 }
 
 func NotFound(ctx *gin.Context, message string, errors interface{}) {

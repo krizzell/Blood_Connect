@@ -5,11 +5,9 @@
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -27,11 +25,120 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
-/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# iOS/macOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vscode/*
+**/ios/**/.vscode/settings.json
+**/ios/**/.vscode/tasks.json
+**/ios/**/.vscode/launch.json
+**/ios/**/.vscode/extensions.json
+**/ios/**/Flutter/Flutter.podspec
+**/ios/**/Flutter/Flutter.framework
+**/ios/**/Flutter/Flutter.framework.dSYM
+**/ios/**/Flutter/Flutter.xcframework
+**/ios/**/Flutter/Flutter.xcframework/**
+**/ios/**/Flutter/.last_build_id
+**/ios/**/.dart_tool/
+**/ios/**/.packages
+**/ios/**/.pub-cache/
+**/ios/**/.pub/
+**/ios/**/build/
+**/ios/**/flutter_*.png
+**/ios/**/GeneratedPluginRegistrant.h
+**/ios/**/GeneratedPluginRegistrant.m
+**/ios/**/plugins/
+**/ios/**/Flutter/GeneratedPluginRegistrant.*
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.framework.dSYM
+**/ios/Flutter/Flutter.xcframework
+**/ios/Flutter/Flutter.xcframework/**
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/.dart_tool/
+**/ios/Flutter/.packages
+**/ios/Flutter/.pub-cache/
+**/ios/Flutter/.pub/
+**/ios/Flutter/build/
+**/ios/Flutter/flutter_*.png
+**/ios/Flutter/GeneratedPluginRegistrant.h
+**/ios/Flutter/GeneratedPluginRegistrant.m
+**/ios/Flutter/plugins/
+**/ios/Flutter/Flutter/Flutter.podspec
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/ephemeral/**
+**/.ios/Flutter/ephemeral/
+**/.ios/Flutter/ephemeral/**
+
+# Packages
+packages
+
+# Exceptions to above rules.
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Android/Gradle
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/*.jks
+**/*.keystore
+
+# iOS/macOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vscode/*
+!**/ios/**/.vscode/settings.json
+!**/ios/**/.vscode/tasks.json
+!**/ios/**/.vscode/launch.json
+!**/ios/**/.vscode/extensions.json
+**/ios/**/Flutter/Flutter.podspec
+**/ios/**/Flutter/Flutter.framework
+**/ios/**/Flutter/Flutter.framework.dSYM
+**/ios/**/Flutter/Flutter.xcframework
+**/ios/**/Flutter/Flutter.xcframework/**
+**/ios/**/Flutter/.last_build_id
+**/ios/**/.dart_tool/
+**/ios/**/.packages
+**/ios/**/.pub-cache/
+**/ios/**/.pub/
+**/ios/**/build/
+**/ios/**/flutter_*.png
+**/ios/**/GeneratedPluginRegistrant.h
+**/ios/**/GeneratedPluginRegistrant.m
+**/ios/**/plugins/
+**/ios/**/Flutter/GeneratedPluginRegistrant.*
+
+# Web
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +150,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.config.dart
+
+# Environment
+.env
+.env.*
