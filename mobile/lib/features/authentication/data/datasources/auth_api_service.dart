@@ -16,7 +16,7 @@ class AuthApiService {
   Future<LoginResponse> login(LoginRequest request) async {
     try {
       final response = await _dio.post(
-        '${AppConstants.apiBaseUrl}/api/v1/auth/login',
+        '${AppConstants.apiBaseUrl}/auth/login',
         data: request.toJson(),
       );
 
@@ -47,14 +47,19 @@ class AuthApiService {
   Future<RegisterResponse> register(RegisterRequest request) async {
     try {
       final response = await _dio.post(
-        '${AppConstants.apiBaseUrl}/api/v1/auth/register',
+        '${AppConstants.apiBaseUrl}/auth/register',
         data: request.toJson(),
       );
+
+      print('[AuthApiService] Register response: status=${response.statusCode}, data=${response.data}');
 
       // Handle success response (201)
       if ((response.statusCode == 201 || response.statusCode == 200) &&
           response.data['success'] == true) {
-        return RegisterResponse.fromJson(response.data['data']);
+        print('[AuthApiService] Parsing RegisterResponse from: ${response.data['data']}');
+        final registerResponse = RegisterResponse.fromJson(response.data['data']);
+        print('[AuthApiService] RegisterResponse parsed: $registerResponse');
+        return registerResponse;
       }
 
       throw DioException(
@@ -63,9 +68,11 @@ class AuthApiService {
         type: DioExceptionType.badResponse,
         error: response.data['message'] ?? 'Registration failed',
       );
-    } on DioException {
+    } on DioException catch (e) {
+      print('[AuthApiService] DioException: ${e.message}');
       rethrow;
     } catch (e) {
+      print('[AuthApiService] Register error: $e');
       throw DioException(
         requestOptions: RequestOptions(path: ''),
         error: e.toString(),

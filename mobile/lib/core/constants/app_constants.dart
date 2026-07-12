@@ -2,7 +2,10 @@ class AppConstants {
   AppConstants._();
 
   // API Configuration
-  static const String apiBaseUrl = 'http://localhost:8080/api/v1';
+  // Use 10.0.2.2 for Android emulator (default gateway to host machine)
+  // Use localhost for iOS simulator or physical device on same network
+  // Backend runs on port 8081 (see backend/.env APP_PORT=8081)
+  static const String apiBaseUrl = 'http://10.0.2.2:8081/api/v1';
   static const Duration apiTimeoutDuration = Duration(seconds: 30);
 
   // Storage Keys

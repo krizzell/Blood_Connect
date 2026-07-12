@@ -49,25 +49,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String fullName,
     required String email,
     required String password,
-    required String confirmPassword,
     required String phone,
     required String gender,
     required String birthDate,
     required String bloodType,
     required String rhesus,
-    required double weight,
+    required int weight,
     required String? lastDonorDate,
     required double latitude,
     required double longitude,
   }) async {
     state = const AuthState.loading();
+    print('[AuthNotifier] Register: loading state set');
 
     try {
       final registerRequest = RegisterRequest(
         fullName: fullName,
         email: email,
         password: password,
-        confirmPassword: confirmPassword,
         phone: phone,
         gender: gender,
         birthDate: birthDate,
@@ -81,15 +80,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       await _authRepository.register(registerRequest);
+      print('[AuthNotifier] Register: API success, setting registrationSuccess');
 
       // After successful registration, set state to registrationSuccess
       // This will trigger redirect to login screen
       state = const AuthState.registrationSuccess();
+      print('[AuthNotifier] Register: registrationSuccess state set: $state');
     } on DioException catch (e) {
+      print('[AuthNotifier] Register: DioException - ${_handleDioError(e)}');
       state = AuthState.error(
         message: _handleDioError(e),
       );
     } catch (e) {
+      print('[AuthNotifier] Register: Exception - $e');
       state = AuthState.error(
         message: e.toString(),
       );
@@ -135,6 +138,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = const AuthState.unauthenticated();
     }
+  }
+
+  /// Reset state ke unauthenticated
+  void resetState() {
+    state = const AuthState.unauthenticated();
   }
 
   /// Handle DioException dan return user-friendly error message

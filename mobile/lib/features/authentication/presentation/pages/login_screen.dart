@@ -54,11 +54,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // Navigate to main when authenticated
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      print('[LoginScreen] Auth state changed: previous=$previous, next=$next');
       next.whenOrNull(
         authenticated: (_, __) {
+          print('[LoginScreen] Authenticated - navigating to main');
           context.go(AppRoutes.main);
         },
         error: (message) {
+          print('[LoginScreen] Error: $message');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(message),

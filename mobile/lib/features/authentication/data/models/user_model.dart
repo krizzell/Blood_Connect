@@ -8,16 +8,16 @@ part 'user_model.g.dart';
 class UserModel with _$UserModel {
   const factory UserModel({
     required String id,
-    required String fullName,
+    @JsonKey(name: 'full_name') required String fullName,
     required String email,
     required String phone,
     required String gender,
-    required String bloodType,
+    @JsonKey(name: 'blood_type') required String bloodType,
     required String rhesus,
     required double? weight,
-    required bool isAvailable,
-    required bool isVerified,
-    required String? profilePhoto,
+    @JsonKey(name: 'is_available') required bool isAvailable,
+    @JsonKey(name: 'is_verified') required bool isVerified,
+    @JsonKey(name: 'profile_photo') required String? profilePhoto,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

@@ -14,10 +14,12 @@ class AppRoutes {
   static const String explore = 'explore';
   static const String profile = 'profile';
 
-  // Feature Routes
-  static const String bloodRequestDetail = 'detail/:id';
+  // Blood Request Routes
+  static const String createBloodRequest = '$bloodRequest/create';
+  static const String bloodRequestDetail = '$bloodRequest/detail/:id';
+
+  // Other Routes
   static const String screening = 'screening/:id';
-  static const String createRequest = 'create-request';
   static const String editProfile = 'edit-profile';
   static const String viewProfile = 'profile/:id';
 }

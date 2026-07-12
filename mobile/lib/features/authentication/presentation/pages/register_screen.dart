@@ -28,7 +28,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _birthDateController = TextEditingController();
   final _weightController = TextEditingController();
 
-  String _selectedGender = 'M';
+  String _selectedGender = 'Male';
   String _selectedBloodType = 'A';
   String _selectedRhesus = '+';
   DateTime? _selectedBirthDate;
@@ -86,13 +86,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             fullName: _fullNameController.text.trim(),
             email: _emailController.text.trim(),
             password: _passwordController.text,
-            confirmPassword: _confirmPasswordController.text,
             phone: _phoneController.text.trim(),
             gender: _selectedGender,
             birthDate: _birthDateController.text,
             bloodType: _selectedBloodType,
             rhesus: _selectedRhesus,
-            weight: double.parse(_weightController.text),
+            weight: int.parse(_weightController.text),
             lastDonorDate: null,
             latitude: _latitude!,
             longitude: _longitude!,
@@ -106,11 +105,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     // Navigate based on auth state
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      print('[RegisterScreen] Auth state changed: previous=$previous, next=$next');
       next.whenOrNull(
         authenticated: (_, __) {
+          print('[RegisterScreen] Authenticated - navigating to main');
           context.go(AppRoutes.main);
         },
         registrationSuccess: () {
+          print('[RegisterScreen] Registration success - showing snackbar and navigating to login');
           // Show success message and navigate to login
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -122,11 +124,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           // Delay slightly to let user see the snackbar
           Future.delayed(const Duration(milliseconds: 1500), () {
             if (context.mounted) {
+              print('[RegisterScreen] Resetting state and navigating to login');
+              // Reset auth state to unauthenticated before navigating
+              ref.read(authNotifierProvider.notifier).resetState();
+              // Then navigate to login
               context.go(AppRoutes.login);
             }
           });
         },
         error: (message) {
+          print('[RegisterScreen] Error: $message');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(message),
@@ -266,8 +273,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               }
                             },
                             items: const [
-                              DropdownMenuItem(value: 'M', child: Text('Laki-laki')),
-                              DropdownMenuItem(value: 'F', child: Text('Perempuan')),
+                              DropdownMenuItem(value: 'Male', child: Text('Laki-laki')),
+                              DropdownMenuItem(value: 'Female', child: Text('Perempuan')),
                             ],
                             decoration: InputDecoration(
                               filled: true,

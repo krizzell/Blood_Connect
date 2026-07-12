@@ -7,16 +7,15 @@ part 'register_request.g.dart';
 @freezed
 class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
-    required String fullName,
+    @JsonKey(name: 'full_name') required String fullName,
     required String email,
     required String password,
-    required String confirmPassword,
     required String phone,
     required String gender,
-    required String birthDate,
-    required String bloodType,
+    @JsonKey(name: 'birth_date') required String birthDate,
+    @JsonKey(name: 'blood_type') required String bloodType,
     required String rhesus,
-    required double weight,
+    required int weight,
     @JsonKey(name: 'last_donor_date') required String? lastDonorDate,
     required double latitude,
     required double longitude,

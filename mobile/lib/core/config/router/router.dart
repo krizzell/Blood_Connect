@@ -7,6 +7,7 @@ import 'package:blood_connect/presentation/screens/home/home_screen.dart';
 import 'package:blood_connect/presentation/screens/blood_request/blood_request_screen.dart';
 import 'package:blood_connect/presentation/screens/explore/explore_screen.dart';
 import 'package:blood_connect/presentation/screens/profile/profile_screen.dart';
+import 'package:blood_connect/features/blood_request/presentation/pages/create_blood_request_screen.dart';
 import 'package:blood_connect/features/authentication/presentation/pages/login_screen.dart';
 import 'package:blood_connect/features/authentication/presentation/pages/register_screen.dart';
 import 'package:blood_connect/features/authentication/domain/domain_export.dart';
@@ -16,54 +17,76 @@ final routerProvider = Provider((ref) {
   final authState = ref.watch(authNotifierProvider);
 
   return GoRouter(
-    initialLocation: AppRoutes.main, // TODO: Change to AppRoutes.splash after testing
+    initialLocation: AppRoutes.splash,
+    debugLogDiagnostics: true, // Debug routing
     redirect: (context, state) {
-      // TODO: Uncomment redirect logic after testing register/login flow
-      // If we're on the splash screen, don't redirect
-      // if (state.matchedLocation == AppRoutes.splash) {
-      //   return null;
-      // }
-
-      // Check auth state
-      // return authState.when(
-      //   initial: () => AppRoutes.splash,
-      //   loading: () => null,
-      //   authenticated: (_, __) {
-      //     // If user is authenticated and tries to access auth routes, redirect to main
-      //     if (state.matchedLocation == AppRoutes.login ||
-      //         state.matchedLocation == AppRoutes.register ||
-      //         state.matchedLocation == AppRoutes.forgotPassword) {
-      //       return AppRoutes.main;
-      //     }
-      //     return null;
-      //   },
-      //   registrationSuccess: () {
-      //     // Allow user to see success message and navigate to login
-      //     if (state.matchedLocation == AppRoutes.register) {
-      //       return null; // Stay on register screen for now
-      //     }
-      //     return null;
-      //   },
-      //   unauthenticated: () {
-      //     // If user is not authenticated and tries to access protected routes, redirect to login
-      //     if (state.matchedLocation == AppRoutes.main ||
-      //         state.matchedLocation.startsWith(AppRoutes.main)) {
-      //       return AppRoutes.login;
-      //     }
-      //     return null;
-      //   },
-      //   error: (_) {
-      //     // On error, redirect to login
-      //     if (state.matchedLocation != AppRoutes.login &&
-      //         state.matchedLocation != AppRoutes.register) {
-      //       return AppRoutes.login;
-      //     }
-      //     return null;
-      //   },
-      // );
+      final location = state.matchedLocation;
       
-      // Redirect logic disabled for testing - allows direct access to all routes
-      return null;
+      // Never redirect splash screen
+      if (location == AppRoutes.splash) {
+        return null;
+      }
+
+      return authState.when(
+        // Initial state: show splash
+        initial: () {
+          if (location != AppRoutes.splash) {
+            return AppRoutes.splash;
+          }
+          return null;
+        },
+        
+        // Loading state: stay on current page
+        loading: () => null,
+        
+        // Authenticated: allow main, redirect auth routes to main
+        authenticated: (_, __) {
+          if (location == AppRoutes.login ||
+              location == AppRoutes.register ||
+              location == AppRoutes.forgotPassword) {
+            return AppRoutes.main;
+          }
+          return null;
+        },
+        
+        // Registration success: allow register page and login page
+        registrationSuccess: () {
+          // Can be on register or navigate to login
+          if (location == AppRoutes.login || location == AppRoutes.register) {
+            return null;
+          }
+          // Anything else redirect to login
+          if (location != AppRoutes.main &&
+              !location.startsWith(AppRoutes.main)) {
+            return AppRoutes.login;
+          }
+          return null;
+        },
+        
+        // Unauthenticated: allow auth routes, redirect main to login
+        unauthenticated: () {
+          if (location == AppRoutes.main ||
+              location.startsWith(AppRoutes.main)) {
+            return AppRoutes.login;
+          }
+          // Allow login, register, forgot password
+          if (location == AppRoutes.login ||
+              location == AppRoutes.register ||
+              location == AppRoutes.forgotPassword) {
+            return null;
+          }
+          return null;
+        },
+        
+        // Error state: redirect to login
+        error: (_) {
+          if (location != AppRoutes.login &&
+              location != AppRoutes.register) {
+            return AppRoutes.login;
+          }
+          return null;
+        },
+      );
     },
     routes: [
       // Splash Screen
@@ -102,6 +125,12 @@ final routerProvider = Provider((ref) {
           GoRoute(
             path: AppRoutes.bloodRequest,
             builder: (context, state) => const BloodRequestScreen(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (context, state) => const CreateBloodRequestScreen(),
+              ),
+            ],
           ),
           GoRoute(
             path: AppRoutes.explore,

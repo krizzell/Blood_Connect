@@ -8,7 +8,7 @@ part 'register_response.g.dart';
 class RegisterResponse with _$RegisterResponse {
   const factory RegisterResponse({
     required String id,
-    required String fullName,
+    @JsonKey(name: 'full_name') required String fullName,
     required String email,
   }) = _RegisterResponse;
 
