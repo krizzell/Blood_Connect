@@ -11,10 +11,7 @@ type CreateBloodRequestResponse struct {
 	UserID          uuid.UUID `json:"user_id"`
 	PatientName     string    `json:"patient_name"`
 	Relationship    string    `json:"relationship"`
-	HospitalName    string    `json:"hospital_name"`
-	HospitalAddress string    `json:"hospital_address"`
-	Latitude        float64   `json:"latitude"`
-	Longitude       float64   `json:"longitude"`
+	Location        string    `json:"location"`
 	BloodType       string    `json:"blood_type"`
 	Rhesus          string    `json:"rhesus"`
 	BagsNeeded      int       `json:"bags_needed"`
@@ -27,7 +24,7 @@ type CreateBloodRequestResponse struct {
 type BloodRequestListResponse struct {
 	ID          uuid.UUID `json:"id"`
 	PatientName string    `json:"patient_name"`
-	HospitalName string    `json:"hospital_name"`
+	Location    string    `json:"location"`
 	BloodType   string    `json:"blood_type"`
 	Rhesus      string    `json:"rhesus"`
 	BagsNeeded  int       `json:"bags_needed"`
@@ -40,16 +37,14 @@ type BloodRequestDetailResponse struct {
 	ID              uuid.UUID `json:"id"`
 	PatientName     string    `json:"patient_name"`
 	Relationship    string    `json:"relationship"`
-	HospitalName    string    `json:"hospital_name"`
-	HospitalAddress string    `json:"hospital_address"`
-	Latitude        float64   `json:"latitude"`
-	Longitude       float64   `json:"longitude"`
+	Location        string    `json:"location"`
 	BloodType       string    `json:"blood_type"`
 	Rhesus          string    `json:"rhesus"`
 	BagsNeeded      int       `json:"bags_needed"`
 	Urgency         string    `json:"urgency"`
 	Status          string    `json:"status"`
 	Notes           *string   `json:"notes"`
+	ContactPhone    string    `json:"contact_phone"`
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 }
@@ -65,8 +60,7 @@ type CloseBloodRequestResponse struct {
 type AvailableBloodRequestResponse struct {
 	ID              uuid.UUID `json:"id"`
 	PatientName     string    `json:"patient_name"`
-	HospitalName    string    `json:"hospital_name"`
-	HospitalAddress string    `json:"hospital_address"`
+	Location        string    `json:"location"`
 	BloodType       string    `json:"blood_type"`
 	Rhesus          string    `json:"rhesus"`
 	BagsNeeded      int       `json:"bags_needed"`

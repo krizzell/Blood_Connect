@@ -11,17 +11,35 @@ import 'package:blood_connect/features/blood_request/presentation/pages/create_b
 import 'package:blood_connect/features/authentication/presentation/pages/login_screen.dart';
 import 'package:blood_connect/features/authentication/presentation/pages/register_screen.dart';
 import 'package:blood_connect/features/authentication/domain/domain_export.dart';
+import 'package:blood_connect/features/blood_request/presentation/pages/blood_request_detail_screen.dart';
+import 'package:blood_connect/features/donor_post/presentation/pages/create_donor_post_screen.dart';
+import 'package:blood_connect/features/donor_post/presentation/pages/donor_post_detail_screen.dart';
 import 'app_routes.dart';
 
-final routerProvider = Provider((ref) {
-  final authState = ref.watch(authNotifierProvider);
+/// Bridge between Riverpod auth state and GoRouter's refreshListenable.
+/// This notifies GoRouter to re-evaluate redirects WITHOUT recreating the router.
+class _AuthChangeNotifier extends ChangeNotifier {
+  _AuthChangeNotifier(Ref ref) {
+    ref.listen(authNotifierProvider, (previous, next) {
+      if (previous != next) {
+        notifyListeners();
+      }
+    });
+  }
+}
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final authChangeNotifier = _AuthChangeNotifier(ref);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    debugLogDiagnostics: true, // Debug routing
+    debugLogDiagnostics: true,
+    refreshListenable: authChangeNotifier,
     redirect: (context, state) {
-      final location = state.matchedLocation;
-      
+      // Read current auth state (not watch — GoRouter is created once)
+      final authState = ref.read(authNotifierProvider);
+      final location = state.uri.path;
+
       // Never redirect splash screen
       if (location == AppRoutes.splash) {
         return null;
@@ -78,7 +96,7 @@ final routerProvider = Provider((ref) {
           return null;
         },
         
-        // Error state: redirect to login
+        // Error state: stay on current auth page (login/register)
         error: (_) {
           if (location != AppRoutes.login &&
               location != AppRoutes.register) {
@@ -129,6 +147,28 @@ final routerProvider = Provider((ref) {
               GoRoute(
                 path: 'create',
                 builder: (context, state) => const CreateBloodRequestScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) => BloodRequestDetailScreen(
+                  id: state.pathParameters['id']!,
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: AppRoutes.donorPost,
+            builder: (context, state) => const Scaffold(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (context, state) => const CreateDonorPostScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) => DonorPostDetailScreen(
+                  id: state.pathParameters['id']!,
+                ),
               ),
             ],
           ),

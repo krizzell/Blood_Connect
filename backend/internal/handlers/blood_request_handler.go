@@ -312,8 +312,26 @@ func (handler *BloodRequestHandler) CloseBloodRequestHandler(ctx *gin.Context) {
 // Retrieves all active (PENDING) blood requests for potential donors.
 // Results are sorted by urgency (highest first) and then by creation date (newest first).
 func (handler *BloodRequestHandler) GetAvailableBloodRequestsHandler(ctx *gin.Context) {
+	// Extract userID from context (set by JWT middleware)
+	userIDValue := ctx.MustGet("userID")
+	userIDString, ok := userIDValue.(string)
+	if !ok {
+		response.InternalServerError(ctx, "Internal server error", gin.H{
+			"server": []string{"An unexpected error occurred"},
+		})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDString)
+	if err != nil {
+		response.InternalServerError(ctx, "Internal server error", gin.H{
+			"server": []string{fmt.Sprintf("invalid user ID in context: %v", err)},
+		})
+		return
+	}
+
 	// Call service to get available blood requests
-	availableRequests, err := handler.bloodRequestService.GetAvailableBloodRequests()
+	availableRequests, err := handler.bloodRequestService.GetAvailableBloodRequests(userID)
 	if err != nil {
 		response.InternalServerError(ctx, "Internal server error", gin.H{
 			"server": []string{"An unexpected error occurred"},

@@ -35,6 +35,9 @@ type BloodRequestRepository interface {
 	// Results are ordered by urgency (Critical > High > Medium > Low) then created_at DESC.
 	// Returns an empty slice if no requests are found.
 	FindAllPending() ([]models.BloodRequest, error)
+
+	// FindAllPendingExcludingUser retrieves all blood requests with PENDING status, excluding requests from a specific user.
+	FindAllPendingExcludingUser(userID uuid.UUID) ([]models.BloodRequest, error)
 }
 
 type BloodRequestRepositoryImpl struct {
@@ -57,7 +60,7 @@ func (repository *BloodRequestRepositoryImpl) FindByUserID(userID interface{}) (
 
 func (repository *BloodRequestRepositoryImpl) FindByID(id uuid.UUID) (*models.BloodRequest, error) {
 	var request models.BloodRequest
-	err := repository.db.Where("id = ?", id).First(&request).Error
+	err := repository.db.Preload("User").Where("id = ?", id).First(&request).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -81,6 +84,18 @@ func (repository *BloodRequestRepositoryImpl) FindAllPending() ([]models.BloodRe
 	// Critical=4, High=3, Medium=2, Low=1
 	err := repository.db.
 		Where("status = ?", "Pending").
+		Order("CASE urgency WHEN 'Critical' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 WHEN 'Low' THEN 4 ELSE 5 END").
+		Order("created_at DESC").
+		Find(&requests).Error
+	return requests, err
+}
+
+func (repository *BloodRequestRepositoryImpl) FindAllPendingExcludingUser(userID uuid.UUID) ([]models.BloodRequest, error) {
+	var requests []models.BloodRequest
+	// Order by urgency (using CASE for priority) and then created_at DESC
+	err := repository.db.
+		Where("status = ?", "Pending").
+		Where("user_id != ?", userID).
 		Order("CASE urgency WHEN 'Critical' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 WHEN 'Low' THEN 4 ELSE 5 END").
 		Order("created_at DESC").
 		Find(&requests).Error

@@ -9,7 +9,7 @@ class AppConstants {
   static const Duration apiTimeoutDuration = Duration(seconds: 30);
 
   // Storage Keys
-  static const String tokenKey = 'auth_token';
+  static const String tokenKey = 'jwt_token';
   static const String refreshTokenKey = 'refresh_token';
   static const String userDataKey = 'user_data';
 

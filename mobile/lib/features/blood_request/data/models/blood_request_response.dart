@@ -22,19 +22,8 @@ class BloodRequestResponse with _$BloodRequestResponse {
     /// Hubungan dengan pasien
     required String relationship,
 
-    /// Nama rumah sakit
-    @JsonKey(name: 'hospital_name')
-    required String hospitalName,
-
-    /// Alamat rumah sakit
-    @JsonKey(name: 'hospital_address')
-    required String hospitalAddress,
-
-    /// Latitude lokasi
-    required double latitude,
-
-    /// Longitude lokasi
-    required double longitude,
+    /// Lokasi / Daerah
+    required String location,
 
     /// Jenis darah
     @JsonKey(name: 'blood_type')
@@ -73,8 +62,7 @@ class BloodRequestListResponse with _$BloodRequestListResponse {
     required String id,
     @JsonKey(name: 'patient_name')
     required String patientName,
-    @JsonKey(name: 'hospital_name')
-    required String hospitalName,
+    required String location,
     @JsonKey(name: 'blood_type')
     required String bloodType,
     required String rhesus,
@@ -96,17 +84,10 @@ class BloodRequestListResponse with _$BloodRequestListResponse {
 class BloodRequestDetailResponse with _$BloodRequestDetailResponse {
   const factory BloodRequestDetailResponse({
     required String id,
-    @JsonKey(name: 'user_id')
-    required String userId,
     @JsonKey(name: 'patient_name')
     required String patientName,
     required String relationship,
-    @JsonKey(name: 'hospital_name')
-    required String hospitalName,
-    @JsonKey(name: 'hospital_address')
-    required String hospitalAddress,
-    required double latitude,
-    required double longitude,
+    required String location,
     @JsonKey(name: 'blood_type')
     required String bloodType,
     required String rhesus,
@@ -115,6 +96,8 @@ class BloodRequestDetailResponse with _$BloodRequestDetailResponse {
     required String urgency,
     required String status,
     String? notes,
+    @JsonKey(name: 'contact_phone')
+    required String contactPhone,
     @JsonKey(name: 'created_at')
     required DateTime createdAt,
     @JsonKey(name: 'updated_at')

@@ -113,24 +113,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         },
         registrationSuccess: () {
           print('[RegisterScreen] Registration success - showing snackbar and navigating to login');
-          // Show success message and navigate to login
+          // Reset auth state to unauthenticated first
+          ref.read(authNotifierProvider.notifier).resetState();
+          // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Akun berhasil dibuat! Silakan login.'),
               backgroundColor: AppColors.success,
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 3),
             ),
           );
-          // Delay slightly to let user see the snackbar
-          Future.delayed(const Duration(milliseconds: 1500), () {
-            if (context.mounted) {
-              print('[RegisterScreen] Resetting state and navigating to login');
-              // Reset auth state to unauthenticated before navigating
-              ref.read(authNotifierProvider.notifier).resetState();
-              // Then navigate to login
-              context.go(AppRoutes.login);
-            }
-          });
+          // Navigate to login
+          context.go(AppRoutes.login);
         },
         error: (message) {
           print('[RegisterScreen] Error: $message');

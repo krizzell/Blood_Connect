@@ -15,7 +15,7 @@ final dioProvider = Provider<Dio>((ref) {
   );
 
   // Add JWT Interceptor
-  dio.interceptors.add(JwtInterceptor());
+  dio.interceptors.add(JwtInterceptor(ref));
 
   // Add Logger Interceptor (for debug)
   dio.interceptors.add(

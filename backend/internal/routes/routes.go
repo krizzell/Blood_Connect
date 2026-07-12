@@ -15,4 +15,5 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB, cfg config.Config) {
 	BloodRequestRoutes(api, db, cfg)
 	ScreeningRoutes(api, db, cfg)
 	NotificationRoutes(api)
+	DonorPostRoutes(api, db, cfg)
 }

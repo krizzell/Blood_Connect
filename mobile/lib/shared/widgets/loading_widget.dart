@@ -73,9 +73,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               stops: [
-                _controller.value - 0.3,
-                _controller.value,
-                _controller.value + 0.3,
+                (_controller.value - 0.3).clamp(0.0, 1.0),
+                _controller.value.clamp(0.0, 1.0),
+                (_controller.value + 0.3).clamp(0.0, 1.0),
               ],
               colors: const [
                 AppColors.background,

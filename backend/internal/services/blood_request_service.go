@@ -30,7 +30,7 @@ type BloodRequestService interface {
 	GetBloodRequestDetail(userID uuid.UUID, requestID uuid.UUID) (*dto.BloodRequestDetailResponse, error)
 	UpdateBloodRequest(userID uuid.UUID, requestID uuid.UUID, request dto.UpdateBloodRequestRequest) (*dto.BloodRequestDetailResponse, error)
 	CloseBloodRequest(userID uuid.UUID, requestID uuid.UUID) (*dto.CloseBloodRequestResponse, error)
-	GetAvailableBloodRequests() ([]dto.AvailableBloodRequestResponse, error)
+	GetAvailableBloodRequests(userID uuid.UUID) ([]dto.AvailableBloodRequestResponse, error)
 }
 
 type BloodRequestServiceImpl struct {
@@ -51,36 +51,21 @@ func (service *BloodRequestServiceImpl) CreateBloodRequest(userID uuid.UUID, req
 	if request.BagsNeeded < 1 {
 		return nil, ErrBagsNeededInvalid
 	}
-
-	// Business rule validation: latitude must be between -90 and 90
-	if request.Latitude < -90 || request.Latitude > 90 {
-		return nil, ErrLatitudeInvalid
-	}
-
-	// Business rule validation: longitude must be between -180 and 180
-	if request.Longitude < -180 || request.Longitude > 180 {
-		return nil, ErrLongitudeInvalid
-	}
-
 	// Create the blood request model
 	bloodRequest := &models.BloodRequest{
-		ID:              uuid.New(),
-		UserID:          userID,
-		PatientName:     request.PatientName,
-		Relationship:    &request.Relationship,
-		HospitalName:    request.HospitalName,
-		HospitalAddress: request.HospitalAddress,
-		Latitude:        request.Latitude,
-		Longitude:       request.Longitude,
-		BloodType:       constants.BloodType(request.BloodType),
-		Rhesus:          constants.Rhesus(request.Rhesus),
-		BagsNeeded:      request.BagsNeeded,
-		Urgency:         constants.Urgency(request.Urgency),
-		Note:            request.Notes,
-		Status:          constants.RequestStatusPending, // Automatically set to Pending
-		FulfilledAt:     nil,                            // Automatically set to NULL
-		CreatedAt:       time.Now(),                     // Automatically set
-		UpdatedAt:       time.Now(),                     // Automatically set
+		ID:           uuid.New(),
+		UserID:       userID,
+		PatientName:  request.PatientName,
+		Location:     request.Location,
+		BloodType:    constants.BloodType(request.BloodType),
+		Rhesus:       constants.Rhesus(request.Rhesus),
+		BagsNeeded:   request.BagsNeeded,
+		Urgency:      constants.Urgency(request.Urgency),
+		Note:         request.Notes,
+		Status:       constants.RequestStatusPending, // Automatically set to Pending
+		FulfilledAt:  nil,                            // Automatically set to NULL
+		CreatedAt:    time.Now(),                     // Automatically set
+		UpdatedAt:    time.Now(),                     // Automatically set
 	}
 
 	// Save to database
@@ -90,21 +75,17 @@ func (service *BloodRequestServiceImpl) CreateBloodRequest(userID uuid.UUID, req
 
 	// Map to response DTO
 	response := &dto.CreateBloodRequestResponse{
-		ID:              bloodRequest.ID,
-		UserID:          bloodRequest.UserID,
-		PatientName:     bloodRequest.PatientName,
-		Relationship:    *bloodRequest.Relationship,
-		HospitalName:    bloodRequest.HospitalName,
-		HospitalAddress: bloodRequest.HospitalAddress,
-		Latitude:        bloodRequest.Latitude,
-		Longitude:       bloodRequest.Longitude,
-		BloodType:       string(bloodRequest.BloodType),
-		Rhesus:          string(bloodRequest.Rhesus),
-		BagsNeeded:      bloodRequest.BagsNeeded,
-		Urgency:         string(bloodRequest.Urgency),
-		Status:          string(bloodRequest.Status),
-		Notes:           bloodRequest.Note,
-		CreatedAt:       bloodRequest.CreatedAt,
+		ID:          bloodRequest.ID,
+		UserID:      bloodRequest.UserID,
+		PatientName: bloodRequest.PatientName,
+		Location:    bloodRequest.Location,
+		BloodType:   string(bloodRequest.BloodType),
+		Rhesus:      string(bloodRequest.Rhesus),
+		BagsNeeded:  bloodRequest.BagsNeeded,
+		Urgency:     string(bloodRequest.Urgency),
+		Status:      string(bloodRequest.Status),
+		Notes:       bloodRequest.Note,
+		CreatedAt:   bloodRequest.CreatedAt,
 	}
 
 	return response, nil
@@ -121,15 +102,15 @@ func (service *BloodRequestServiceImpl) GetMyBloodRequests(userID uuid.UUID) ([]
 	var responses []dto.BloodRequestListResponse
 	for _, br := range bloodRequests {
 		responses = append(responses, dto.BloodRequestListResponse{
-			ID:           br.ID,
-			PatientName:  br.PatientName,
-			HospitalName: br.HospitalName,
-			BloodType:    string(br.BloodType),
-			Rhesus:       string(br.Rhesus),
-			BagsNeeded:   br.BagsNeeded,
-			Urgency:      string(br.Urgency),
-			Status:       string(br.Status),
-			CreatedAt:    br.CreatedAt,
+			ID:          br.ID,
+			PatientName: br.PatientName,
+			Location:    br.Location,
+			BloodType:   string(br.BloodType),
+			Rhesus:      string(br.Rhesus),
+			BagsNeeded:  br.BagsNeeded,
+			Urgency:     string(br.Urgency),
+			Status:      string(br.Status),
+			CreatedAt:   br.CreatedAt,
 		})
 	}
 
@@ -148,8 +129,8 @@ func (service *BloodRequestServiceImpl) GetBloodRequestDetail(userID uuid.UUID, 
 		return nil, ErrBloodRequestNotFound
 	}
 
-	// Check if user is the owner of this blood request
-	if bloodRequest.UserID != userID {
+	// Check if user is the owner of this blood request OR if the request is PENDING (open to everyone)
+	if bloodRequest.UserID != userID && bloodRequest.Status != constants.RequestStatusPending {
 		return nil, ErrUnauthorized
 	}
 
@@ -157,17 +138,14 @@ func (service *BloodRequestServiceImpl) GetBloodRequestDetail(userID uuid.UUID, 
 	response := &dto.BloodRequestDetailResponse{
 		ID:              bloodRequest.ID,
 		PatientName:     bloodRequest.PatientName,
-		Relationship:    *bloodRequest.Relationship,
-		HospitalName:    bloodRequest.HospitalName,
-		HospitalAddress: bloodRequest.HospitalAddress,
-		Latitude:        bloodRequest.Latitude,
-		Longitude:       bloodRequest.Longitude,
+		Location:        bloodRequest.Location,
 		BloodType:       string(bloodRequest.BloodType),
 		Rhesus:          string(bloodRequest.Rhesus),
 		BagsNeeded:      bloodRequest.BagsNeeded,
 		Urgency:         string(bloodRequest.Urgency),
 		Status:          string(bloodRequest.Status),
 		Notes:           bloodRequest.Note,
+		ContactPhone:    bloodRequest.User.Phone,
 		CreatedAt:       bloodRequest.CreatedAt,
 		UpdatedAt:       bloodRequest.UpdatedAt,
 	}
@@ -209,25 +187,8 @@ func (service *BloodRequestServiceImpl) UpdateBloodRequest(userID uuid.UUID, req
 	if request.Relationship != "" {
 		bloodRequest.Relationship = &request.Relationship
 	}
-	if request.HospitalName != "" {
-		bloodRequest.HospitalName = request.HospitalName
-	}
-	if request.HospitalAddress != "" {
-		bloodRequest.HospitalAddress = request.HospitalAddress
-	}
-	if request.Latitude != nil {
-		// Validate latitude range
-		if *request.Latitude < -90 || *request.Latitude > 90 {
-			return nil, ErrLatitudeInvalid
-		}
-		bloodRequest.Latitude = *request.Latitude
-	}
-	if request.Longitude != nil {
-		// Validate longitude range
-		if *request.Longitude < -180 || *request.Longitude > 180 {
-			return nil, ErrLongitudeInvalid
-		}
-		bloodRequest.Longitude = *request.Longitude
+	if request.Location != "" {
+		bloodRequest.Location = request.Location
 	}
 	if request.BloodType != "" {
 		bloodRequest.BloodType = constants.BloodType(request.BloodType)
@@ -261,11 +222,7 @@ func (service *BloodRequestServiceImpl) UpdateBloodRequest(userID uuid.UUID, req
 	response := &dto.BloodRequestDetailResponse{
 		ID:              bloodRequest.ID,
 		PatientName:     bloodRequest.PatientName,
-		Relationship:    *bloodRequest.Relationship,
-		HospitalName:    bloodRequest.HospitalName,
-		HospitalAddress: bloodRequest.HospitalAddress,
-		Latitude:        bloodRequest.Latitude,
-		Longitude:       bloodRequest.Longitude,
+		Location:        bloodRequest.Location,
 		BloodType:       string(bloodRequest.BloodType),
 		Rhesus:          string(bloodRequest.Rhesus),
 		BagsNeeded:      bloodRequest.BagsNeeded,
@@ -325,9 +282,9 @@ func (service *BloodRequestServiceImpl) CloseBloodRequest(userID uuid.UUID, requ
 }
 
 
-func (service *BloodRequestServiceImpl) GetAvailableBloodRequests() ([]dto.AvailableBloodRequestResponse, error) {
-	// Retrieve all PENDING blood requests from repository
-	bloodRequests, err := service.bloodRequestRepository.FindAllPending()
+func (service *BloodRequestServiceImpl) GetAvailableBloodRequests(userID uuid.UUID) ([]dto.AvailableBloodRequestResponse, error) {
+	// Retrieve all PENDING blood requests from repository excluding the user's own requests
+	bloodRequests, err := service.bloodRequestRepository.FindAllPendingExcludingUser(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -338,8 +295,7 @@ func (service *BloodRequestServiceImpl) GetAvailableBloodRequests() ([]dto.Avail
 		responses = append(responses, dto.AvailableBloodRequestResponse{
 			ID:              br.ID,
 			PatientName:     br.PatientName,
-			HospitalName:    br.HospitalName,
-			HospitalAddress: br.HospitalAddress,
+			Location:        br.Location,
 			BloodType:       string(br.BloodType),
 			Rhesus:          string(br.Rhesus),
 			BagsNeeded:      br.BagsNeeded,

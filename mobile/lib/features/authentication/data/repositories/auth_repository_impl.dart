@@ -6,6 +6,7 @@ import '../models/models_export.dart';
 abstract class AuthRepository {
   Future<LoginResponse> login(LoginRequest request);
   Future<RegisterResponse> register(RegisterRequest request);
+  Future<ProfileModel> getProfile();
 }
 
 /// Implementation of AuthRepository
@@ -22,6 +23,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<RegisterResponse> register(RegisterRequest request) async {
     return await _apiService.register(request);
+  }
+
+  @override
+  Future<ProfileModel> getProfile() async {
+    return await _apiService.getProfile();
   }
 }
 

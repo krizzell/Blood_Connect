@@ -8,9 +8,9 @@ part 'login_response.g.dart';
 @freezed
 class LoginResponse with _$LoginResponse {
   const factory LoginResponse({
-    required String accessToken,
-    required String tokenType,
-    required int expiresIn,
+    @JsonKey(name: 'access_token') required String accessToken,
+    @JsonKey(name: 'token_type') required String tokenType,
+    @JsonKey(name: 'expires_in') required int expiresIn,
     @JsonKey(name: 'user') required UserModel userData,
   }) = _LoginResponse;
 

@@ -79,6 +79,32 @@ class AuthApiService {
       );
     }
   }
+  /// Profile endpoint: GET /api/v1/auth/profile
+  /// Returns [ProfileModel] containing user profile data
+  /// Throws [DioException] if fetch fails
+  Future<ProfileModel> getProfile() async {
+    try {
+      final response = await _dio.get('${AppConstants.apiBaseUrl}/auth/profile');
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        return ProfileModel.fromJson(response.data['data']);
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        type: DioExceptionType.badResponse,
+        error: response.data['message'] ?? 'Failed to fetch profile',
+      );
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      throw DioException(
+        requestOptions: RequestOptions(path: ''),
+        error: e.toString(),
+      );
+    }
+  }
 }
 
 /// Riverpod provider for AuthApiService

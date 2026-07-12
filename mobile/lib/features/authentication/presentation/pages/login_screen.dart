@@ -26,10 +26,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Check if user is already authenticated
-    Future.microtask(() {
-      ref.read(authNotifierProvider.notifier).checkAuthStatus();
-    });
   }
 
   @override
@@ -58,6 +54,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       next.whenOrNull(
         authenticated: (_, __) {
           print('[LoginScreen] Authenticated - navigating to main');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Login berhasil!'),
+              backgroundColor: AppColors.success,
+              duration: const Duration(seconds: 2),
+            ),
+          );
           context.go(AppRoutes.main);
         },
         error: (message) {

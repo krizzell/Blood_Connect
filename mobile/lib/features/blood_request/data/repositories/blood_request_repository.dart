@@ -2,6 +2,7 @@ import 'package:blood_connect/features/blood_request/data/datasources/blood_requ
 import 'package:blood_connect/features/blood_request/data/models/models_export.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:blood_connect/core/network/dio_client.dart';
 
 /// Abstract repository untuk blood request data operations
 abstract class BloodRequestRepository {
@@ -75,8 +76,7 @@ class BloodRequestRepositoryImpl implements BloodRequestRepository {
 
 /// Riverpod provider untuk BloodRequestApiService
 final bloodRequestApiServiceProvider = Provider<BloodRequestApiService>((ref) {
-  // Get Dio instance from ref if available, otherwise create new one
-  final dio = Dio();
+  final dio = ref.watch(dioProvider);
   return BloodRequestApiService(dio);
 });
 

@@ -10,14 +10,14 @@ class UserModel with _$UserModel {
     required String id,
     @JsonKey(name: 'full_name') required String fullName,
     required String email,
-    required String phone,
-    required String gender,
-    @JsonKey(name: 'blood_type') required String bloodType,
-    required String rhesus,
-    required double? weight,
-    @JsonKey(name: 'is_available') required bool isAvailable,
-    @JsonKey(name: 'is_verified') required bool isVerified,
-    @JsonKey(name: 'profile_photo') required String? profilePhoto,
+    @Default('') String phone,
+    @Default('') String gender,
+    @Default('') @JsonKey(name: 'blood_type') String bloodType,
+    @Default('') String rhesus,
+    double? weight,
+    @Default(true) @JsonKey(name: 'is_available') bool isAvailable,
+    @Default(false) @JsonKey(name: 'is_verified') bool isVerified,
+    @JsonKey(name: 'profile_photo') String? profilePhoto,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

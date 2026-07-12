@@ -13,10 +13,7 @@ type BloodRequest struct {
 	UserID          uuid.UUID               `gorm:"type:uuid;not null;column:user_id" json:"user_id"`
 	PatientName     string                  `gorm:"type:varchar(100);not null;column:patient_name" json:"patient_name"`
 	Relationship    *string                 `gorm:"type:varchar(50);column:relationship" json:"relationship"`
-	HospitalName    string                  `gorm:"type:varchar(150);not null;column:hospital_name" json:"hospital_name"`
-	HospitalAddress string                  `gorm:"type:text;not null;column:hospital_address" json:"hospital_address"`
-	Latitude        float64                 `gorm:"type:double precision;not null;column:latitude" json:"latitude"`
-	Longitude       float64                 `gorm:"type:double precision;not null;column:longitude" json:"longitude"`
+	Location        string                  `gorm:"type:varchar(150);not null;column:location" json:"location"`
 	BloodType       constants.BloodType     `gorm:"type:blood_type_enum;not null;column:blood_type" json:"blood_type"`
 	Rhesus          constants.Rhesus        `gorm:"type:rhesus_enum;not null;column:rhesus" json:"rhesus"`
 	BagsNeeded      int                     `gorm:"not null;column:bags_needed" json:"bags_needed"`

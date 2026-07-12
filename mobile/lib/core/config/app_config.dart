@@ -22,7 +22,7 @@ class AppConfig {
         return 'https://staging-api.bloodconnect.com/api/v1';
       case Environment.development:
       default:
-        return 'http://localhost:8080/api/v1';
+        return 'http://10.0.2.2:8081/api/v1';
     }
   }
 }

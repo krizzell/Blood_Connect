@@ -27,41 +27,29 @@ class _CreateBloodRequestScreenState
   // Controllers
   final _patientNameController = TextEditingController();
   final _relationshipController = TextEditingController();
-  final _hospitalNameController = TextEditingController();
-  final _hospitalAddressController = TextEditingController();
   final _bagsNeededController = TextEditingController();
   final _notesController = TextEditingController();
-  final _latitudeController = TextEditingController();
-  final _longitudeController = TextEditingController();
+  final _locationController = TextEditingController();
 
   // Dropdowns
   String _selectedBloodType = 'A';
   String _selectedRhesus = '+';
   String _selectedUrgency = 'High';
 
-  // Default location (Jakarta)
-  double? _latitude = -6.2088;
-  double? _longitude = 106.8456;
+
 
   @override
   void dispose() {
     _patientNameController.dispose();
     _relationshipController.dispose();
-    _hospitalNameController.dispose();
-    _hospitalAddressController.dispose();
     _bagsNeededController.dispose();
     _notesController.dispose();
-    _latitudeController.dispose();
-    _longitudeController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
-  @override
   void initState() {
     super.initState();
-    // Initialize location fields with default values
-    _latitudeController.text = _latitude.toString();
-    _longitudeController.text = _longitude.toString();
   }
 
   void _handleCreateBloodRequest() {
@@ -69,10 +57,7 @@ class _CreateBloodRequestScreenState
       final request = BloodRequestRequest(
         patientName: _patientNameController.text.trim(),
         relationship: _relationshipController.text.trim(),
-        hospitalName: _hospitalNameController.text.trim(),
-        hospitalAddress: _hospitalAddressController.text.trim(),
-        latitude: _latitude ?? -6.2088,
-        longitude: _longitude ?? 106.8456,
+        location: _locationController.text.trim(),
         bloodType: _selectedBloodType,
         rhesus: _selectedRhesus,
         bagsNeeded: int.parse(_bagsNeededController.text),
@@ -105,7 +90,7 @@ class _CreateBloodRequestScreenState
         // Navigate back to blood request screen after a short delay
         Future.delayed(const Duration(milliseconds: 500), () {
           if (context.mounted) {
-            context.go(AppRoutes.bloodRequest);
+            context.pop();
           }
         });
       } else if (next.errorMessage != null && !next.isLoading) {
@@ -171,7 +156,7 @@ class _CreateBloodRequestScreenState
                     AppTextFormField(
                       controller: _relationshipController,
                       label: 'Hubungan Dengan Pasien',
-                      hintText: 'Contoh: Ayah, Ibu, Saudara',
+                      hintText: 'Contoh: Diri Sendiri, Ayah, Ibu',
                       prefixIcon: Icons.family_restroom_outlined,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -183,94 +168,25 @@ class _CreateBloodRequestScreenState
                     ),
                     SizedBox(height: 24.h),
 
-                    // Section: Informasi Rumah Sakit
+                    // Section: Lokasi
                     Text(
-                      'Informasi Rumah Sakit',
+                      'Lokasi / Daerah',
                       style: AppTypography.headingSmall.copyWith(
                         color: AppColors.textPrimary,
                       ),
                     ),
                     SizedBox(height: 16.h),
-
-                    // Hospital Name
                     AppTextFormField(
-                      controller: _hospitalNameController,
-                      label: 'Nama Rumah Sakit',
-                      hintText: 'Masukkan nama rumah sakit',
-                      prefixIcon: Icons.local_hospital_outlined,
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Nama rumah sakit wajib diisi';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Hospital Address
-                    AppTextFormField(
-                      controller: _hospitalAddressController,
-                      label: 'Alamat Rumah Sakit',
-                      hintText: 'Masukkan alamat lengkap',
+                      controller: _locationController,
+                      label: 'Kota / Daerah',
+                      hintText: 'Contoh: Jakarta Selatan, Surabaya',
                       prefixIcon: Icons.location_on_outlined,
                       textInputAction: TextInputAction.next,
-                      maxLines: 2,
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
-                          return 'Alamat rumah sakit wajib diisi';
+                          return 'Lokasi wajib diisi';
                         }
                         return null;
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Latitude
-                    AppTextFormField(
-                      controller: _latitudeController,
-                      label: 'Latitude',
-                      hintText: '-6.2088',
-                      prefixIcon: Icons.map_outlined,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Latitude wajib diisi';
-                        }
-                        final lat = double.tryParse(value!);
-                        if (lat == null || lat < -90 || lat > 90) {
-                          return 'Latitude harus antara -90 dan 90';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _latitude = double.tryParse(value);
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Longitude
-                    AppTextFormField(
-                      controller: _longitudeController,
-                      label: 'Longitude',
-                      hintText: '106.8456',
-                      prefixIcon: Icons.map_outlined,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Longitude wajib diisi';
-                        }
-                        final lng = double.tryParse(value!);
-                        if (lng == null || lng < -180 || lng > 180) {
-                          return 'Longitude harus antara -180 dan 180';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _longitude = double.tryParse(value);
                       },
                     ),
                     SizedBox(height: 24.h),

@@ -15,19 +15,8 @@ class BloodRequestRequest with _$BloodRequestRequest {
     /// Hubungan dengan pasien (ayah, ibu, saudara, dll)
     required String relationship,
 
-    /// Nama rumah sakit tempat pasien ditangani
-    @JsonKey(name: 'hospital_name')
-    required String hospitalName,
-
-    /// Alamat rumah sakit
-    @JsonKey(name: 'hospital_address')
-    required String hospitalAddress,
-
-    /// Latitude lokasi rumah sakit (-90 sampai 90)
-    required double latitude,
-
-    /// Longitude lokasi rumah sakit (-180 sampai 180)
-    required double longitude,
+    /// Lokasi / Daerah
+    required String location,
 
     /// Jenis darah: A, B, AB, O
     @JsonKey(name: 'blood_type')
