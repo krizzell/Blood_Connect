@@ -189,22 +189,56 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       _buildMenuItemWithIcon(
                         icon: Icons.person_outline,
                         label: 'Informasi Pribadi',
-                        onTap: () {},
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Informasi Pribadi'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Nama: ${profile.fullName}'),
+                                  const SizedBox(height: 8),
+                                  Text('Email: ${profile.email}'),
+                                  const SizedBox(height: 8),
+                                  Text('Telepon: ${profile.phone.isNotEmpty ? profile.phone : '-'}'),
+                                  const SizedBox(height: 8),
+                                  Text('Jenis Kelamin: ${profile.gender.isNotEmpty ? profile.gender : '-'}'),
+                                  const SizedBox(height: 8),
+                                  Text('Golongan Darah: ${profile.bloodType}${profile.rhesus}'),
+                                  const SizedBox(height: 8),
+                                  Text('Berat Badan: ${profile.weight != null ? '${profile.weight} kg' : '-'}'),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Tutup'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                       _buildMenuItemWithIcon(
                         icon: Icons.medical_information_outlined,
                         label: 'Riwayat Medis',
-                        onTap: () {},
-                      ),
-                      _buildMenuItemWithIcon(
-                        icon: Icons.settings_outlined,
-                        label: 'Pengaturan',
-                        onTap: () {},
-                      ),
-                      _buildMenuItemWithIcon(
-                        icon: Icons.help_outline,
-                        label: 'Pusat Bantuan',
-                        onTap: () {},
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Riwayat Medis'),
+                              content: const Text('Menu ini akan menampilkan catatan riwayat screening dan donor darah Anda. Fitur ini sedang dalam pengembangan.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Tutup'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                         isLast: true,
                       ),
                     ],
