@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:blood_connect/core/config/theme/app_colors.dart';
 import 'package:blood_connect/core/config/theme/app_typography.dart';
@@ -44,28 +43,30 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(bloodRequestNotifierProvider);
-
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'Permintaan Darah',
+          'Aktivitas Saya',
           style: AppTypography.headingMedium.copyWith(
-            color: AppColors.textPrimary,
+            color: AppColors.onSurface,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: false,
         elevation: 0,
         backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: AppColors.onSurface,
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSecondary,
+          unselectedLabelColor: AppColors.onSurfaceVariant,
           indicatorColor: AppColors.primary,
+          labelStyle: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
+          unselectedLabelStyle: AppTypography.labelLarge,
           tabs: const [
-            Tab(text: 'Permintaan Darah'),
-            Tab(text: 'Tawaran Donor'),
+            Tab(text: 'Aktif'),
+            Tab(text: 'Riwayat'),
           ],
         ),
       ),
@@ -73,17 +74,24 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
         child: TabBarView(
           controller: _tabController,
           children: [
-            _buildMyRequestsTab(),
-            _buildMyDonorPostsTab(),
+            _buildActivityTab(isActive: true),
+            _buildActivityTab(isActive: false),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _showCreateOptionsDialog(context);
         },
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'Buat Baru',
+          style: AppTypography.labelLarge.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
@@ -91,27 +99,29 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
   void _showCreateOptionsDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: AppColors.surfaceContainerLowest,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 24.w),
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Buat Postingan Baru',
-                style: AppTypography.headingMedium.copyWith(
-                  color: AppColors.textPrimary,
+                style: AppTypography.titleLarge.copyWith(
+                  color: AppColors.onSurface,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 24.h),
+              const SizedBox(height: 24),
               ListTile(
                 leading: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.error.withOpacity(0.1),
+                    color: AppColors.errorContainer,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.emergency, color: AppColors.error),
@@ -126,9 +136,9 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
               const Divider(),
               ListTile(
                 leading: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.1),
+                    color: AppColors.successContainer,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.favorite, color: AppColors.success),
@@ -140,7 +150,7 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                   context.push(AppRoutes.createDonorPost);
                 },
               ),
-              SizedBox(height: 24.h),
+              const SizedBox(height: 24),
             ],
           ),
         );
@@ -148,107 +158,91 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
     );
   }
 
-  Widget _buildMyRequestsTab() {
-    final state = ref.watch(bloodRequestNotifierProvider);
-    return RefreshIndicator(
-      onRefresh: () async {
-        await ref.read(bloodRequestNotifierProvider.notifier).getMyBloodRequests();
-      },
-      child: state.isLoading
-          ? const Center(child: LoadingWidget())
-          : state.errorMessage != null
-              ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: ErrorStateWidget(
-                        title: 'Terjadi Kesalahan',
-                        message: state.errorMessage!,
-                        onRetry: () {
-                          ref.read(bloodRequestNotifierProvider.notifier).getMyBloodRequests();
-                        },
-                      ),
-                    ),
-                  ],
-                )
-              : (state.bloodRequests?.isEmpty ?? true)
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: const EmptyStateWidget(
-                            title: 'Belum Ada Permintaan',
-                            subtitle: 'Buat permintaan darah pertama Anda',
-                            icon: Icons.inbox_outlined,
-                          ),
-                        ),
-                      ],
-                    )
-                  : ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                      itemCount: state.bloodRequests!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 12.h),
-                          child: _buildRequestCard(state.bloodRequests![index]),
-                        );
-                      },
-                    ),
-    );
-  }
+  Widget _buildActivityTab({required bool isActive}) {
+    final requestState = ref.watch(bloodRequestNotifierProvider);
+    final postState = ref.watch(donorPostNotifierProvider);
 
-  Widget _buildMyDonorPostsTab() {
-    final state = ref.watch(donorPostNotifierProvider);
+    if (requestState.isLoading || postState.isLoading) {
+      return const Center(child: LoadingWidget());
+    }
+
+    if (requestState.errorMessage != null || postState.errorMessage != null) {
+      return ErrorStateWidget(
+        title: 'Terjadi Kesalahan',
+        message: requestState.errorMessage ?? postState.errorMessage ?? 'Unknown error',
+        onRetry: () {
+          ref.read(bloodRequestNotifierProvider.notifier).getMyBloodRequests();
+          ref.read(donorPostNotifierProvider.notifier).getMyPosts();
+        },
+      );
+    }
+
+    // Combine and sort
+    List<dynamic> combinedList = [];
+    final requests = requestState.bloodRequests ?? [];
+    final posts = postState.myPosts ?? [];
+
+    for (var r in requests) {
+      bool isPending = r.status == 'Pending' || r.status == 'Searching';
+      if ((isActive && isPending) || (!isActive && !isPending)) {
+        combinedList.add(r);
+      }
+    }
+    
+    for (var p in posts) {
+      bool isPending = p.status == 'Pending';
+      if ((isActive && isPending) || (!isActive && !isPending)) {
+        combinedList.add(p);
+      }
+    }
+
+    // Sort by date descending
+    combinedList.sort((a, b) {
+      DateTime dateA = a is BloodRequestListResponse ? a.createdAt : (a as DonorPostListResponse).createdAt;
+      DateTime dateB = b is BloodRequestListResponse ? b.createdAt : (b as DonorPostListResponse).createdAt;
+      return dateB.compareTo(dateA);
+    });
+
     return RefreshIndicator(
       onRefresh: () async {
-        await ref.read(donorPostNotifierProvider.notifier).getMyPosts();
+        await Future.wait([
+          ref.read(bloodRequestNotifierProvider.notifier).getMyBloodRequests(),
+          ref.read(donorPostNotifierProvider.notifier).getMyPosts(),
+        ]);
       },
-      child: state.isLoading
-          ? const Center(child: LoadingWidget())
-          : state.errorMessage != null
-              ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: ErrorStateWidget(
-                        title: 'Terjadi Kesalahan',
-                        message: state.errorMessage!,
-                        onRetry: () {
-                          ref.read(donorPostNotifierProvider.notifier).getMyPosts();
-                        },
-                      ),
-                    ),
-                  ],
-                )
-              : (state.myPosts?.isEmpty ?? true)
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: const EmptyStateWidget(
-                            title: 'Belum Ada Tawaran',
-                            subtitle: 'Buat tawaran donor darah pertama Anda',
-                            icon: Icons.favorite_border,
-                          ),
-                        ),
-                      ],
-                    )
-                  : ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                      itemCount: state.myPosts!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 12.h),
-                          child: _buildDonorPostCard(state.myPosts![index]),
-                        );
-                      },
-                    ),
+      child: combinedList.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: EmptyStateWidget(
+                    title: isActive ? 'Belum Ada Aktivitas Aktif' : 'Belum Ada Riwayat',
+                    subtitle: isActive ? 'Buat permintaan atau tawaran donor.' : 'Riwayat selesai Anda akan muncul di sini.',
+                    icon: Icons.history,
+                  ),
+                ),
+              ],
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              itemCount: combinedList.length,
+              itemBuilder: (context, index) {
+                final item = combinedList[index];
+                if (item is BloodRequestListResponse) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildRequestCard(item),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildDonorPostCard(item as DonorPostListResponse),
+                  );
+                }
+              },
+            ),
     );
   }
 
@@ -276,48 +270,53 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
         context.push('${AppRoutes.main}/${AppRoutes.bloodRequest}/${request.id}');
       },
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.border,
+            color: AppColors.outlineVariant,
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Row: Blood Type, Urgency, Status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    // Blood Type Badge
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primaryContainer.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${request.bloodType}${request.rhesus}',
-                        style: AppTypography.bodyLarge.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.primaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    // Urgency Badge
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
                       ),
                       decoration: BoxDecoration(
                         color: urgencyColor.withOpacity(0.1),
@@ -327,17 +326,16 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                         request.urgency,
                         style: AppTypography.labelSmall.copyWith(
                           color: urgencyColor,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
-                // Status Badge
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
@@ -347,38 +345,35 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                     request.status,
                     style: AppTypography.labelSmall.copyWith(
                       color: statusColor,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12.h),
-
-            // Patient Info
+            const SizedBox(height: 12),
             Text(
-              'Pasien: ${request.patientName}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w500,
+              'Butuh Darah: ${request.patientName}',
+              style: AppTypography.titleLarge.copyWith(
+                color: AppColors.onSurface,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
-            SizedBox(height: 12.h),
-
-            // Footer: Bags & Created Date
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${request.bagsNeeded} kantong darah',
+                  '${request.bagsNeeded} kantong • ${request.location}',
                   style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.onSurfaceVariant,
                   ),
                 ),
                 Text(
                   DateFormat('dd MMM yyyy').format(request.createdAt),
                   style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -395,14 +390,21 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
         context.push('${AppRoutes.main}/${AppRoutes.donorPost}/${post.id}');
       },
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.border,
+            color: AppColors.outlineVariant,
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,27 +415,28 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primaryContainer.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${post.bloodType}${post.rhesus}',
-                        style: AppTypography.bodyLarge.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.primaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.w),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.success.withOpacity(0.1),
@@ -443,16 +446,16 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                         'Siap Donor',
                         style: AppTypography.labelSmall.copyWith(
                           color: AppColors.success,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: post.status == 'Pending' ? Colors.blue.withOpacity(0.1) : AppColors.success.withOpacity(0.1),
@@ -462,21 +465,22 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                     post.status == 'Pending' ? 'Tersedia' : 'Selesai',
                     style: AppTypography.labelSmall.copyWith(
                       color: post.status == 'Pending' ? Colors.blue : AppColors.success,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12.h),
+            const SizedBox(height: 12),
             Text(
-              'Pendonor: ${post.userName}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w500,
+              'Tawaran Donor Anda',
+              style: AppTypography.titleLarge.copyWith(
+                color: AppColors.onSurface,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
-            SizedBox(height: 12.h),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -484,7 +488,7 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                   child: Text(
                     post.location,
                     style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -493,7 +497,7 @@ class _BloodRequestScreenState extends ConsumerState<BloodRequestScreen> with Si
                 Text(
                   DateFormat('dd MMM yyyy').format(post.createdAt),
                   style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.onSurfaceVariant,
                   ),
                 ),
               ],

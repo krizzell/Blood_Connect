@@ -12,7 +12,7 @@ type DonorResponse struct {
 	ID              uuid.UUID                     `gorm:"type:uuid;primaryKey;column:id" json:"id"`
 	BloodRequestID  uuid.UUID                     `gorm:"type:uuid;not null;column:blood_request_id" json:"blood_request_id"`
 	DonorID         uuid.UUID                     `gorm:"type:uuid;not null;column:donor_id" json:"donor_id"`
-	Status          constants.DonorResponseStatus `gorm:"type:donor_response_status_enum;not null;default:'Waiting';column:status" json:"status"`
+	Status          constants.DonorResponseStatus `gorm:"type:varchar(20);not null;default:'Waiting';column:status" json:"status"`
 	ResponseMessage *string                       `gorm:"type:text;column:response_message" json:"response_message"`
 	AcceptedAt      *time.Time                    `gorm:"column:accepted_at" json:"accepted_at"`
 	CreatedAt       time.Time                     `gorm:"column:created_at" json:"created_at"`

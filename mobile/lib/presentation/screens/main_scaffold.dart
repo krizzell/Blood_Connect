@@ -21,8 +21,8 @@ class MainScaffold extends ConsumerWidget {
         index: currentTab,
         children: const [
           HomeScreen(),
-          BloodRequestScreen(),
-          ExploreScreen(),
+          ExploreScreen(), // Cari
+          BloodRequestScreen(), // Aktivitas
           ProfileScreen(),
         ],
       ),
@@ -38,47 +38,52 @@ class MainScaffold extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(
                 ref,
-                0,
-                currentTab,
-                icon: Iconsax.home,
-                label: 'Home',
+                index: 0,
+                currentTab: currentTab,
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Beranda',
               ),
               _buildNavItem(
                 ref,
-                1,
-                currentTab,
-                icon: Iconsax.heart,
-                label: 'Blood Request',
+                index: 1,
+                currentTab: currentTab,
+                icon: Icons.search_outlined,
+                activeIcon: Icons.search,
+                label: 'Cari',
               ),
               _buildNavItem(
                 ref,
-                2,
-                currentTab,
-                icon: Iconsax.search_normal,
-                label: 'Explore',
+                index: 2,
+                currentTab: currentTab,
+                icon: Icons.analytics_outlined,
+                activeIcon: Icons.analytics,
+                label: 'Aktivitas',
               ),
               _buildNavItem(
                 ref,
-                3,
-                currentTab,
-                icon: Iconsax.profile_circle,
-                label: 'Profile',
+                index: 3,
+                currentTab: currentTab,
+                icon: Icons.person_outline,
+                activeIcon: Icons.person,
+                label: 'Profil',
               ),
             ],
           ),
@@ -88,45 +93,45 @@ class MainScaffold extends ConsumerWidget {
   }
 
   Widget _buildNavItem(
-    WidgetRef ref,
-    int index,
-    int currentTab,
-    {required IconData icon, required String label}
-  ) {
+    WidgetRef ref, {
+    required int index,
+    required int currentTab,
+    required IconData icon,
+    required IconData activeIcon,
+    required String label,
+  }) {
     final isActive = currentTab == index;
 
     return GestureDetector(
       onTap: () {
         ref.read(currentTabProvider.notifier).state = index;
       },
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
         decoration: BoxDecoration(
-          color: isActive
-              ? AppColors.primary.withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: isActive ? AppColors.secondaryContainer : Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
         ),
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              icon,
-              color: isActive ? AppColors.primary : AppColors.textSecondary,
+              isActive ? activeIcon : icon,
+              color: isActive ? AppColors.onSecondaryContainer : AppColors.onSurfaceVariant,
               size: 24,
             ),
-            if (isActive) ...[
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Be Vietnam Pro',
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: isActive ? AppColors.onSecondaryContainer : AppColors.onSurfaceVariant,
               ),
-            ],
+            ),
           ],
         ),
       ),

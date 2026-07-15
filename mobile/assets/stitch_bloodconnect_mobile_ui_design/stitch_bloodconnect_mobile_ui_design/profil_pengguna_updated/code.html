@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#5b403d",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-secondary-fixed": "#410002",
+                    "on-primary-fixed-variant": "#93000e",
+                    "outline-variant": "#e4beba",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f9f9f9",
+                    "on-primary-fixed": "#410003",
+                    "surface-dim": "#dadada",
+                    "primary-fixed-dim": "#ffb4ac",
+                    "on-secondary-container": "#fffbff",
+                    "on-tertiary-fixed": "#001c38",
+                    "secondary-container": "#db322f",
+                    "on-tertiary-fixed-variant": "#004881",
+                    "surface-variant": "#e2e2e2",
+                    "secondary": "#b7131a",
+                    "on-surface": "#1a1c1c",
+                    "surface-tint": "#b91d20",
+                    "surface-container-high": "#e8e8e8",
+                    "surface": "#f9f9f9",
+                    "surface-container-low": "#f3f3f3",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1a1c1c",
+                    "inverse-on-surface": "#f1f1f1",
+                    "background": "#f9f9f9",
+                    "inverse-primary": "#ffb4ac",
+                    "primary-fixed": "#ffdad6",
+                    "on-tertiary-container": "#dbe9ff",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "tertiary-fixed": "#d3e4ff",
+                    "primary": "#a20513",
+                    "inverse-surface": "#2f3131",
+                    "tertiary": "#005190",
+                    "outline": "#8f706c",
+                    "secondary-fixed": "#ffdad6",
+                    "tertiary-fixed-dim": "#a2c9ff",
+                    "primary-container": "#c62828",
+                    "tertiary-container": "#006ab8",
+                    "on-primary-container": "#ffe0dd",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "on-secondary-fixed-variant": "#93000d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "container-padding-mobile": "16px",
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "stack-lg": "32px",
+                    "gutter": "24px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "title-lg": ["Be Vietnam Pro"],
+                    "label-sm": ["Be Vietnam Pro"],
+                    "label-lg": ["Be Vietnam Pro"],
+                    "headline-lg": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "display-lg": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script><meta charset="utf-8"/></head><body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl" data-original-icon="bloodtype" style="font-variation-settings: 'FILL' 1;">bloodtype</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">BloodConnect</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant" data-original-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-8">
+<!-- Profile Header Section -->
+<section class="flex flex-col items-center text-center space-y-4 pt-4">
+<div class="relative">
+<div class="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-primary to-secondary shadow-lg">
+<img class="w-full h-full object-cover rounded-full border-4 border-white" data-alt="A professional and friendly headshot of a young adult with a warm smile. The lighting is soft and natural, emphasizing clear skin and bright eyes. The background is a minimalist, softly blurred modern interior with light wood and clean white walls, aligning with a professional and trustworthy healthcare app aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUbOQq0fvhRiAWJsIqM3BhnHXus19UbKEWCGJzfY7TRB40xiolurlspjaMZNUlObytJMDavnqlowM-B1_nee4n3cjVaInj8T-SfwXyplEmiWAguHq8XzNQHw5kee4nJGL_N5Gyvek4-nfc9HoBEM5w32pWAnB7WxYozXbZocax7Xxjyj4yosWTS06LHj0SGQWb0jLlIF4L5WbQ5X_b-0UNPlUfRLCyoFOkiCvcSQKWDdaXQ0oGZDUzyA"/>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-bold shadow-md border-2 border-white">
+                    A+
+                </div>
+</div>
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Super</h2>
+<p class="font-body-md text-on-surface-variant">Anggota sejak Jan 2023</p>
+</div>
+</section>
+<!-- Stats Summary Bento Row -->
+<section class="grid grid-cols-3 gap-3">
+<div class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center text-center shadow-sm border border-outline-variant/30 hover:shadow-md transition-shadow cursor-default">
+<span class="text-primary font-bold text-xl">12</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider">Donor</span>
+</div>
+<div class="bg-primary p-4 rounded-xl flex flex-col items-center justify-center text-center shadow-md hover:shadow-lg transition-shadow cursor-default">
+<span class="text-white font-bold text-xl">36</span>
+<span class="font-label-sm text-white/80 uppercase tracking-wider text-[10px] leading-tight">Nyawa Terselamatkan</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center text-center shadow-sm border border-outline-variant/30 hover:shadow-md transition-shadow cursor-default">
+<span class="text-tertiary font-bold text-xl">2.4k</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider">Poin</span>
+</div>
+</section>
+<!-- Menu Items List -->
+<section class="space-y-2">
+<h3 class="px-2 font-label-lg text-on-surface-variant uppercase tracking-widest mb-2">Pengaturan Akun</h3>
+<div class="bg-surface border border-outline-variant/20 rounded-2xl overflow-hidden shadow-sm">
+<!-- Personal Info -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">person</span>
+</div>
+<span class="font-title-lg text-on-surface text-lg">Informasi Pribadi</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<div class="h-[1px] bg-outline-variant/20 mx-4"></div>
+<!-- Health Records -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">description</span>
+</div>
+<span class="font-title-lg text-on-surface text-lg">Catatan Kesehatan</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<div class="h-[1px] bg-outline-variant/20 mx-4"></div>
+<!-- My Rewards -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">card_membership</span>
+</div>
+<span class="font-title-lg text-on-surface text-lg">Hadiah Saya</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-secondary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">BARU</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</button>
+<div class="h-[1px] bg-outline-variant/20 mx-4"></div>
+<!-- Settings -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<span class="font-title-lg text-on-surface text-lg">Pengaturan</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<div class="h-[1px] bg-outline-variant/20 mx-4"></div>
+<!-- Help Center -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors active:bg-surface-container-high group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</div>
+<span class="font-title-lg text-on-surface text-lg">Pusat Bantuan</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Logout Action -->
+<section class="pb-8 pt-4">
+<button class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-surface border-2 border-error text-error font-title-lg hover:bg-error/5 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">logout</span>
+                Keluar
+            </button>
+<p class="text-center mt-6 font-label-sm text-on-surface-variant opacity-50">Versi Aplikasi 2.4.1 (Build 1290)</p>
+</section>
+</main>
+<!-- Navigation Shell (Bottom Nav Bar) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface shadow-[0_-2px_8px_rgba(0,0,0,0.04)] rounded-t-xl">
+<!-- Home -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="font-label-sm text-label-sm">Beranda</span>
+</button>
+<!-- Find -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined text-2xl">search</span>
+<span class="font-label-sm text-label-sm">Cari</span>
+</button>
+<!-- Activity -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="font-label-sm text-label-sm">Aktivitas</span>
+</button>
+<!-- Profile (ACTIVE) -->
+<button class="flex flex-col items-center justify-center text-primary px-5 py-1 transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm">Profil</span>
+</button>
+</nav></body></html>

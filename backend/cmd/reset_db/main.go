@@ -1,21 +1,24 @@
 package main
 
 import (
-	"fmt"
-
 	"bloodconnect-backend/config"
 	"bloodconnect-backend/internal/models"
-	"bloodconnect-backend/internal/routes"
-
-	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 func main() {
 	cfg := config.LoadEnv()
 	db := config.ConnectDatabase(cfg)
+	fmt.Println("Dropping schema public cascade...")
+	
+	err := db.Exec("DROP SCHEMA public CASCADE; CREATE SCHEMA public;").Error
+	if err != nil {
+		fmt.Println("Error dropping schema:", err)
+		return
+	}
 
-	// AutoMigrate all tables
-	err := db.AutoMigrate(
+	fmt.Println("Running AutoMigrate...")
+	err = db.AutoMigrate(
 		&models.User{},
 		&models.DeviceToken{},
 		&models.DonorPost{},
@@ -27,12 +30,7 @@ func main() {
 	)
 	if err != nil {
 		fmt.Printf("Warning: AutoMigrate failed: %v\n", err)
-	}
-
-	router := gin.Default()
-	routes.RegisterRoutes(router, db, cfg)
-
-	if err := router.Run(fmt.Sprintf(":%s", cfg.AppPort)); err != nil {
-		panic(fmt.Sprintf("failed to start %s server: %v", cfg.AppName, err))
+	} else {
+		fmt.Println("Success!")
 	}
 }

@@ -18,6 +18,7 @@ class UserModel with _$UserModel {
     @Default(true) @JsonKey(name: 'is_available') bool isAvailable,
     @Default(false) @JsonKey(name: 'is_verified') bool isVerified,
     @JsonKey(name: 'profile_photo') String? profilePhoto,
+    @Default('user') String role,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

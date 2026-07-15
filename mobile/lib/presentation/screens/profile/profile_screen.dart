@@ -59,7 +59,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildProfileContent(dynamic profile) {
-    // Determine last donor text
     String lastDonorText = '-';
     if (profile.lastDonorDate != null) {
       final difference = DateTime.now().difference(profile.lastDonorDate!);
@@ -72,142 +71,172 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile Header
-          Center(
+          // Header with Avatar and Background
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 32, bottom: 24),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerLowest,
+              border: Border(
+                bottom: BorderSide(color: AppColors.outlineVariant, width: 1),
+              ),
+            ),
             child: Column(
               children: [
                 Container(
-                  width: 80.w,
-                  height: 80.w,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 40,
-                      color: AppColors.primary,
+                    border: Border.all(color: AppColors.primary, width: 3),
+                    image: const DecorationImage(
+                      image: NetworkImage('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(height: 16.h),
+                const SizedBox(height: 16),
                 Text(
                   profile.fullName,
-                  style: AppTypography.headingSmall.copyWith(
-                    color: AppColors.textPrimary,
+                  style: AppTypography.headlineLargeMobile.copyWith(
+                    color: AppColors.onSurface,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                const SizedBox(height: 4),
                 Text(
                   profile.email,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: 12.h),
+                const SizedBox(height: 12),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primaryContainer,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '${profile.bloodType} Rhesus ${profile.rhesus}',
-                    style: AppTypography.bodyMedium.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
+                    'Golongan Darah: ${profile.bloodType}${profile.rhesus}',
+                    style: AppTypography.labelLarge.copyWith(
+                      color: AppColors.onPrimaryContainer,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 32.h),
 
-          // Statistics Section
-          Text(
-            'Riwayat Donor',
-            style: AppTypography.headingSmall.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatBox(
-                  label: 'Total Donor',
-                  value: '-', // Backend currently doesn't provide this exact stat
-                  icon: Icons.bloodtype,
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Statistics Section
+                Text(
+                  'Aktivitas Donor',
+                  style: AppTypography.titleLarge.copyWith(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildStatBox(
-                  label: 'Terakhir Donor',
-                  value: lastDonorText,
-                  icon: Icons.calendar_today,
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatBox(
+                        label: 'Total Donor',
+                        value: '0', // TODO: From real history when supported
+                        icon: Icons.water_drop,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildStatBox(
+                        label: 'Terakhir Donor',
+                        value: lastDonorText,
+                        icon: Icons.calendar_month,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.h),
+                const SizedBox(height: 32),
 
-          // Menu Items
-          Text(
-            'Pengaturan',
-            style: AppTypography.headingSmall.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          _buildMenuItemWithIcon(
-            icon: Icons.edit,
-            label: 'Edit Profil',
-            onTap: () {},
-          ),
-          _buildMenuItemWithIcon(
-            icon: Icons.security,
-            label: 'Ubah Password',
-            onTap: () {},
-          ),
-          _buildMenuItemWithIcon(
-            icon: Icons.notifications,
-            label: 'Notifikasi',
-            onTap: () {},
-          ),
-          _buildMenuItemWithIcon(
-            icon: Icons.help,
-            label: 'Bantuan & Dukungan',
-            onTap: () {},
-          ),
-          SizedBox(height: 24.h),
-
-          // Logout Button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                ref.read(authNotifierProvider.notifier).logout();
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Logout'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.error,
-                side: const BorderSide(color: AppColors.error),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                // Menu Items
+                Text(
+                  'Pengaturan Akun',
+                  style: AppTypography.titleLarge.copyWith(
+                    color: AppColors.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-              ),
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainerLowest,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.outlineVariant),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildMenuItemWithIcon(
+                        icon: Icons.person_outline,
+                        label: 'Informasi Pribadi',
+                        onTap: () {},
+                      ),
+                      _buildMenuItemWithIcon(
+                        icon: Icons.medical_information_outlined,
+                        label: 'Riwayat Medis',
+                        onTap: () {},
+                      ),
+                      _buildMenuItemWithIcon(
+                        icon: Icons.settings_outlined,
+                        label: 'Pengaturan',
+                        onTap: () {},
+                      ),
+                      _buildMenuItemWithIcon(
+                        icon: Icons.help_outline,
+                        label: 'Pusat Bantuan',
+                        onTap: () {},
+                        isLast: true,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Logout Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      ref.read(authNotifierProvider.notifier).logout();
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: Text(
+                      'Keluar',
+                      style: AppTypography.labelLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -217,31 +246,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildSkeletonLoading() {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
             child: Column(
               children: [
-                ShimmerLoading(width: 80.w, height: 80.w, borderRadius: BorderRadius.circular(40)),
-                SizedBox(height: 16.h),
-                ShimmerLoading(width: 150.w, height: 24.h),
-                SizedBox(height: 4.h),
-                ShimmerLoading(width: 120.w, height: 16.h),
-                SizedBox(height: 12.h),
-                ShimmerLoading(width: 100.w, height: 32.h, borderRadius: BorderRadius.circular(20)),
+                ShimmerLoading(width: 100, height: 100, borderRadius: BorderRadius.circular(50)),
+                const SizedBox(height: 16),
+                ShimmerLoading(width: 150, height: 28),
+                const SizedBox(height: 8),
+                ShimmerLoading(width: 120, height: 16),
               ],
             ),
           ),
-          SizedBox(height: 32.h),
-          ShimmerLoading(width: 120.w, height: 24.h),
-          SizedBox(height: 12.h),
+          const SizedBox(height: 32),
           Row(
             children: [
-              Expanded(child: ShimmerLoading(width: double.infinity, height: 100.h, borderRadius: BorderRadius.circular(12))),
-              SizedBox(width: 12.w),
-              Expanded(child: ShimmerLoading(width: double.infinity, height: 100.h, borderRadius: BorderRadius.circular(12))),
+              Expanded(child: ShimmerLoading(width: double.infinity, height: 100, borderRadius: BorderRadius.circular(12))),
+              const SizedBox(width: 16),
+              Expanded(child: ShimmerLoading(width: double.infinity, height: 100, borderRadius: BorderRadius.circular(12))),
             ],
           ),
         ],
@@ -255,37 +280,52 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required IconData icon,
   }) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.border,
+          color: AppColors.outlineVariant,
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: AppColors.primary,
-            size: 24,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            value,
-            style: AppTypography.headingSmall.copyWith(
-               color: AppColors.primary,
-               fontWeight: FontWeight.w700,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primaryContainer.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: AppColors.primaryContainer,
+              size: 24,
             ),
           ),
-          SizedBox(height: 4.h),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: AppTypography.headlineLarge.copyWith(
+              color: AppColors.onSurface,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
+          const SizedBox(height: 4),
           Text(
             label,
             style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.onSurfaceVariant,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -296,39 +336,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    bool isLast = false,
   }) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      borderRadius: isLast
+          ? const BorderRadius.vertical(bottom: Radius.circular(16))
+          : BorderRadius.zero,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: AppColors.border,
-              width: 1,
-            ),
-          ),
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: AppColors.outlineVariant.withOpacity(0.5),
+                    width: 1,
+                  ),
+                ),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: AppColors.textSecondary,
-              size: 24,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: AppColors.onSurface,
+                size: 20,
+              ),
             ),
-            SizedBox(width: 16.w),
+            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 label,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textPrimary,
+                style: AppTypography.labelLarge.copyWith(
+                  color: AppColors.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: AppColors.textSecondary,
+              Icons.chevron_right,
+              size: 20,
+              color: AppColors.onSurfaceVariant,
             ),
           ],
         ),

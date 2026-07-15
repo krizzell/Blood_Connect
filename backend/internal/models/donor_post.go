@@ -15,7 +15,7 @@ type DonorPost struct {
 	Rhesus    string                      `gorm:"type:varchar(1);not null;column:rhesus" json:"rhesus"`
 	Location  string                      `gorm:"type:varchar(150);not null;column:location" json:"location"`
 	Notes     *string                     `gorm:"type:text;column:notes" json:"notes"`
-	Status    constants.RequestStatus `gorm:"type:request_status_enum;not null;default:'Pending';column:status" json:"status"`
+	Status    constants.RequestStatus `gorm:"type:varchar(20);not null;default:'Pending';column:status" json:"status"`
 	CreatedAt time.Time                   `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time                   `gorm:"column:updated_at" json:"updated_at"`
 

@@ -113,7 +113,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                     ],
                     Text(
                       widget.label,
-                      style: AppTypography.buttonMedium.copyWith(
+                      style: AppTypography.labelLarge.copyWith(
                         color: widget.textColor ?? AppColors.primary,
                       ),
                     ),

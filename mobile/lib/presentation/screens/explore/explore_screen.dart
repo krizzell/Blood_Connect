@@ -386,71 +386,80 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
         context.push('${AppRoutes.main}/${AppRoutes.bloodRequest}/${request.id}');
       },
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.border,
+            color: AppColors.outlineVariant.withOpacity(0.5),
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 56.w,
-              height: 56.w,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: urgencyColor.withOpacity(0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Text(
                   '${request.bloodType}${request.rhesus}',
-                  style: AppTypography.headingSmall.copyWith(
+                  style: AppTypography.titleLarge.copyWith(
                     color: urgencyColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            SizedBox(width: 16.w),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Pasien: ${request.patientName}',
-                    style: AppTypography.bodyLarge.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
+                    style: AppTypography.titleLarge.copyWith(
+                      color: AppColors.onSurface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 2.h,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: urgencyColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           request.urgency,
                           style: AppTypography.labelSmall.copyWith(
                             color: urgencyColor,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      SizedBox(width: 8.w),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           request.location,
                           style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: AppColors.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -458,16 +467,18 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
                       ),
                     ],
                   ),
-                  SizedBox(height: 4.h),
+                  const SizedBox(height: 8),
                   Text(
-                    'Butuh ${request.bagsNeeded} Kantong',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
+                    'Dibutuhkan ${request.bagsNeeded} Kantong',
+                    style: AppTypography.labelLarge.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
+            Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
           ],
         ),
       ),
@@ -480,71 +491,80 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
         context.push('${AppRoutes.main}/${AppRoutes.donorPost}/${post.id}');
       },
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.border,
+            color: AppColors.outlineVariant.withOpacity(0.5),
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 56.w,
-              height: 56.w,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: AppColors.success.withOpacity(0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Text(
                   '${post.bloodType}${post.rhesus}',
-                  style: AppTypography.headingSmall.copyWith(
+                  style: AppTypography.titleLarge.copyWith(
                     color: AppColors.success,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            SizedBox(width: 16.w),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Pendonor: ${post.userName}',
-                    style: AppTypography.bodyLarge.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
+                    style: AppTypography.titleLarge.copyWith(
+                      color: AppColors.onSurface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 2.h,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.success.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           'Siap Donor',
                           style: AppTypography.labelSmall.copyWith(
                             color: AppColors.success,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      SizedBox(width: 8.w),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           post.location,
                           style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: AppColors.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -555,6 +575,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
                 ],
               ),
             ),
+            Icon(Icons.chevron_right, color: AppColors.onSurfaceVariant),
           ],
         ),
       ),

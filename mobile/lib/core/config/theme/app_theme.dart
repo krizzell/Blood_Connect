@@ -14,7 +14,7 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        tertiary: AppColors.accent,
+        tertiary: AppColors.tertiary,
         surface: AppColors.surface,
         background: AppColors.background,
         error: AppColors.error,
@@ -46,7 +46,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: 0,
-          textStyle: AppTypography.buttonMedium,
+          textStyle: AppTypography.labelLarge,
         ),
       ),
 
@@ -59,7 +59,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(16),
           ),
           side: const BorderSide(color: AppColors.border),
-          textStyle: AppTypography.buttonMedium,
+          textStyle: AppTypography.labelLarge,
         ),
       ),
 
@@ -68,7 +68,7 @@ class AppTheme {
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          textStyle: AppTypography.buttonMedium,
+          textStyle: AppTypography.labelLarge,
         ),
       ),
 
@@ -145,8 +145,8 @@ class AppTheme {
       // Text Theme
       textTheme: TextTheme(
         displayLarge: AppTypography.displayLarge,
-        displayMedium: AppTypography.displayMedium,
-        displaySmall: AppTypography.displaySmall,
+        displayMedium: AppTypography.displayLarge,
+        displaySmall: AppTypography.displayLarge,
         headlineLarge: AppTypography.headingLarge,
         headlineMedium: AppTypography.headingMedium,
         headlineSmall: AppTypography.headingSmall,

@@ -9,13 +9,15 @@ import (
 
 type AccessTokenClaims struct {
 	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwtv5.RegisteredClaims
 }
 
-func GenerateAccessToken(userID, email, secret string, expiresIn time.Duration) (string, error) {
+func GenerateAccessToken(userID, email, role, secret string, expiresIn time.Duration) (string, error) {
 	now := time.Now().UTC()
 	claims := AccessTokenClaims{
 		Email: email,
+		Role:  role,
 		RegisteredClaims: jwtv5.RegisteredClaims{
 			Subject:   userID,
 			IssuedAt:  jwtv5.NewNumericDate(now),

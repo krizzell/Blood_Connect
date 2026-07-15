@@ -8,6 +8,13 @@ type RequestStatus string
 type DonorResponseStatus string
 type NotificationType string
 
+type Role string
+
+const (
+	RoleAdmin Role = "admin"
+	RoleUser  Role = "user"
+)
+
 const (
 	GenderMale   Gender = "Male"
 	GenderFemale Gender = "Female"

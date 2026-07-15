@@ -108,7 +108,7 @@ class _PrimaryButtonState extends State<PrimaryButton>
                     ],
                     Text(
                       widget.label,
-                      style: AppTypography.buttonMedium.copyWith(
+                      style: AppTypography.labelLarge.copyWith(
                         color: widget.textColor ?? Colors.white,
                       ),
                     ),

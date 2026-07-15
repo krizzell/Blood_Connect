@@ -14,6 +14,7 @@ import 'package:blood_connect/features/authentication/domain/domain_export.dart'
 import 'package:blood_connect/features/blood_request/presentation/pages/blood_request_detail_screen.dart';
 import 'package:blood_connect/features/donor_post/presentation/pages/create_donor_post_screen.dart';
 import 'package:blood_connect/features/donor_post/presentation/pages/donor_post_detail_screen.dart';
+import 'package:blood_connect/features/admin/presentation/pages/admin_dashboard_screen.dart';
 import 'app_routes.dart';
 
 /// Bridge between Riverpod auth state and GoRouter's refreshListenable.
@@ -57,13 +58,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         // Loading state: stay on current page
         loading: () => null,
         
-        // Authenticated: allow main, redirect auth routes to main
-        authenticated: (_, __) {
-          if (location == AppRoutes.login ||
-              location == AppRoutes.register ||
-              location == AppRoutes.forgotPassword) {
-            return AppRoutes.main;
+        // Authenticated: allow main or admin, redirect auth routes
+        authenticated: (user, __) {
+          final isAdmin = user.role == 'admin';
+          final isAuthRoute = location == AppRoutes.login ||
+                              location == AppRoutes.register ||
+                              location == AppRoutes.forgotPassword;
+
+          if (isAuthRoute) {
+            return isAdmin ? AppRoutes.admin : AppRoutes.main;
           }
+          
+          if (isAdmin && (location == AppRoutes.main || location.startsWith(AppRoutes.main))) {
+             return AppRoutes.admin; // Force admin to admin area
+          }
+
+          if (!isAdmin && location.startsWith(AppRoutes.admin)) {
+             return AppRoutes.main; // Force user out of admin area
+          }
+
           return null;
         },
         
@@ -181,6 +194,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ProfileScreen(),
           ),
         ],
+      ),
+      
+      // Admin Navigation
+      GoRoute(
+        path: AppRoutes.admin,
+        builder: (context, state) => const AdminDashboardScreen(),
       ),
     ],
   );

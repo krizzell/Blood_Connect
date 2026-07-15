@@ -4,7 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:blood_connect/core/config/theme/app_theme.dart';
 import 'package:blood_connect/core/config/router/router.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
   runApp(const ProviderScope(child: MyApp()));
 }
 

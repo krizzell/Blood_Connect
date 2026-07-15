@@ -1,11 +1,14 @@
+import 'package:blood_connect/core/config/env.dart';
+
 class AppConstants {
   AppConstants._();
 
-  // API Configuration
-  // Use 10.0.2.2 for Android emulator (default gateway to host machine)
-  // Use localhost for iOS simulator or physical device on same network
-  // Backend runs on port 8081 (see backend/.env APP_PORT=8081)
-  static const String apiBaseUrl = 'http://10.0.2.2:8081/api/v1';
+  // App Info
+  static const String appName = 'BloodConnect';
+  static const String appVersion = '1.0.0';
+
+  // Network
+  static const String apiBaseUrl = Env.apiBaseUrl;
   static const Duration apiTimeoutDuration = Duration(seconds: 30);
 
   // Storage Keys
@@ -13,9 +16,7 @@ class AppConstants {
   static const String refreshTokenKey = 'refresh_token';
   static const String userDataKey = 'user_data';
 
-  // App Info
-  static const String appName = 'BloodConnect';
-  static const String appVersion = '1.0.0';
+
 
   // Pagination
   static const int pageSize = 20;

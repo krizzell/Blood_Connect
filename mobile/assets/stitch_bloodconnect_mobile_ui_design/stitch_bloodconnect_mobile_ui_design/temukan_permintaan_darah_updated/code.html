@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cari Permintaan Darah - BloodConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Smooth transition for map toggle */
+        .map-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#5b403d",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-fixed": "#410002",
+                        "on-primary-fixed-variant": "#93000e",
+                        "outline-variant": "#e4beba",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-fixed": "#410003",
+                        "surface-dim": "#dadada",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed": "#001c38",
+                        "secondary-container": "#db322f",
+                        "on-tertiary-fixed-variant": "#004881",
+                        "surface-variant": "#e2e2e2",
+                        "secondary": "#b7131a",
+                        "on-surface": "#1a1c1c",
+                        "surface-tint": "#b91d20",
+                        "surface-container-high": "#e8e8e8",
+                        "surface": "#f9f9f9",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1a1c1c",
+                        "inverse-on-surface": "#f1f1f1",
+                        "background": "#f9f9f9",
+                        "inverse-primary": "#ffb4ac",
+                        "primary-fixed": "#ffdad6",
+                        "on-tertiary-container": "#dbe9ff",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed": "#d3e4ff",
+                        "primary": "#a20513",
+                        "inverse-surface": "#2f3131",
+                        "tertiary": "#005190",
+                        "outline": "#8f706c",
+                        "secondary-fixed": "#ffdad6",
+                        "tertiary-fixed-dim": "#a2c9ff",
+                        "primary-container": "#c62828",
+                        "tertiary-container": "#006ab8",
+                        "on-primary-container": "#ffe0dd",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "on-secondary-fixed-variant": "#93000d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "container-padding-mobile": "16px",
+                        "stack-sm": "8px",
+                        "container-padding-desktop": "32px",
+                        "stack-lg": "32px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "label-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased mb-24 overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface shadow-sm flex items-center justify-between px-container-padding-mobile h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="bloodtype">bloodtype</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">BloodConnect</h1>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="mt-16 px-container-padding-mobile max-w-2xl mx-auto">
+<!-- Search & Filter Section -->
+<section class="sticky top-16 bg-background pt-6 pb-4 z-40">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-12 pr-12 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary placeholder:text-on-surface-variant font-body-md text-on-surface shadow-sm transition-all" placeholder="Cari rumah sakit atau lokasi..." type="text"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-primary hover:bg-primary-container/10 p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Blood Type Chips -->
+<div class="flex gap-3 overflow-x-auto py-4 hide-scrollbar -mx-4 px-4">
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-secondary-container text-on-secondary-container font-label-lg shadow-sm active:scale-95 transition-all">Semua</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg hover:bg-surface-container-highest active:scale-95 transition-all">A+</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg hover:bg-surface-container-highest active:scale-95 transition-all">B-</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg hover:bg-surface-container-highest active:scale-95 transition-all">O+</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg hover:bg-surface-container-highest active:scale-95 transition-all">AB+</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg hover:bg-surface-container-highest active:scale-95 transition-all">O-</button>
+</div>
+</section>
+<!-- Map Preview / Toggle -->
+<section class="mb-stack-lg">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-title-lg text-title-lg text-on-surface">Permintaan Terdekat</h2>
+<button class="text-primary font-label-lg flex items-center gap-1 hover:underline" onclick="toggleMap()">
+<span id="map-btn-text">Lihat di peta</span>
+<span class="material-symbols-outlined" data-icon="map" id="map-btn-icon">map</span>
+</button>
+</div>
+<div class="relative w-full h-40 md:h-56 bg-surface-container-highest rounded-2xl overflow-hidden shadow-sm map-transition" id="map-container">
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDgl5V7XrxnQyOJx3AeWcGvjIjiis8sgjaDkt6fTGWq3JtP7L63PErdwP8e1iwJS8djY3gnCZIGv2w3srI4Wyu5x_61S1GvqbVwiRDY7cqt3h5kA5H-rvUPXnzNhiQKWUMh1SETg90rQkazq4g-tPk0Hapwtb4Fq6YRWifdkXIp5Utea6VyB-C0t-h4hHZDEGqPp2abPwS7-aNGNzN96zhCWhWgzLKjOtetnuGt8q6a9Obj35kfui80hQ')"></div>
+<div class="absolute inset-0 bg-black/5 flex items-center justify-center pointer-events-none">
+<div class="bg-primary text-white p-3 rounded-full shadow-lg animate-pulse">
+<span class="material-symbols-outlined" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Urgent Requests List -->
+<section class="space-y-stack-md">
+<div class="flex items-center justify-between">
+<h2 class="font-title-lg text-title-lg text-on-surface">Permintaan Mendesak</h2>
+<span class="text-error font-label-sm px-2 py-1 bg-error-container rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="emergency" style="font-variation-settings: 'FILL' 1;">emergency</span>
+                    Pembaruan Langsung
+                </span>
+</div>
+<!-- List Items -->
+<div class="grid gap-stack-md">
+<!-- Request 1 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant p-4 rounded-xl flex gap-4 hover:shadow-lg transition-all cursor-pointer active:scale-[0.98]">
+<div class="w-16 h-16 flex-shrink-0 bg-primary-container text-on-primary-container rounded-2xl flex flex-col items-center justify-center shadow-md">
+<span class="font-title-lg text-title-lg leading-none">O+</span>
+<span class="text-[10px] uppercase font-bold tracking-widest mt-1">Dibutuhkan</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-title-lg text-[18px] text-on-surface">RS Umum Kota</h3>
+<span class="text-error font-bold font-label-sm uppercase tracking-tighter bg-error-container/30 px-2 py-0.5 rounded">Mendesak</span>
+</div>
+<p class="text-on-surface-variant font-body-md flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                            2.4 km jauhnya • New York, NY
+                        </p>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBBPJGRPLxQ5a3TObeGk43EkcJac-VyTaPGymYJ493cmhZSEC8zr7f83Lwfft43As85xWHeQ89gXYvQsJRAL8dSOBRnGpa57mqP8CgFI5Khkmty3uXi0NY1B1n8Z8JAggjb2n4KzYnpa0KZwYhDodkU1nMfWaBNamaJ-l07DQGJ9-6r1mTCt8n1EwEzfe9TKF_9OEOQEPoXoIZNIZq13ZuQc1tUEjn2DFosvtE_lbHhSaSrHALRXrAwBg')"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuACM2kEbuKGTgfsaST9FuuoGzGZxTm4vQg0o9oh22ZP9N0oBHQOVlm6hesQCSwh1OpHPT96RDN9SrklYTroVb3fiPVr5DJFvzEuvsYqhNaAO8S6sGqZjnpPXs5DURoW0WUXRfB_nnVGIWEyYo6VMYwIenM-CYTSlwZzq16TP__xDcFrt8gBjSl7qyCzNyFHmdNSZBY-J-3kQCmBBpD_nA7zI4T-dCAsXSPdf6Or1QecDoi_Va1Tth6Abg')"></div>
+</div>
+<span class="text-on-surface-variant font-label-sm">8 pendonor di sekitar</span>
+</div>
+</div>
+</div>
+<!-- Request 2 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant p-4 rounded-xl flex gap-4 hover:shadow-lg transition-all cursor-pointer active:scale-[0.98]">
+<div class="w-16 h-16 flex-shrink-0 bg-secondary-container text-on-secondary-container rounded-2xl flex flex-col items-center justify-center shadow-md">
+<span class="font-title-lg text-title-lg leading-none">B-</span>
+<span class="text-[10px] uppercase font-bold tracking-widest mt-1">Dibutuhkan</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-title-lg text-[18px] text-on-surface">Pusat Anak Mercy</h3>
+<span class="text-primary font-bold font-label-sm uppercase tracking-tighter bg-primary-container/10 px-2 py-0.5 rounded">Kritis</span>
+</div>
+<p class="text-on-surface-variant font-body-md flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                            4.1 km jauhnya • Brooklyn, NY
+                        </p>
+<div class="flex items-center gap-3">
+<div class="h-1.5 flex-grow bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full w-3/4 rounded-full"></div>
+</div>
+<span class="text-on-surface-variant font-label-sm whitespace-nowrap">3/4 kantong ditemukan</span>
+</div>
+</div>
+</div>
+<!-- Request 3 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant p-4 rounded-xl flex gap-4 hover:shadow-lg transition-all cursor-pointer active:scale-[0.98]">
+<div class="w-16 h-16 flex-shrink-0 bg-primary-container text-on-primary-container rounded-2xl flex flex-col items-center justify-center shadow-md">
+<span class="font-title-lg text-title-lg leading-none">A+</span>
+<span class="text-[10px] uppercase font-bold tracking-widest mt-1">Dibutuhkan</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-title-lg text-[18px] text-on-surface">St. Jude Medical</h3>
+<span class="text-error font-bold font-label-sm uppercase tracking-tighter bg-error-container/30 px-2 py-0.5 rounded">Mendesak</span>
+</div>
+<p class="text-on-surface-variant font-body-md flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                            1.2 km jauhnya • Manhattan, NY
+                        </p>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="schedule">schedule</span>
+<span class="text-on-surface-variant font-label-sm">Berakhir dalam 2 jam</span>
+</div>
+</div>
+</div>
+<!-- Request 4 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant p-4 rounded-xl flex gap-4 hover:shadow-lg transition-all cursor-pointer active:scale-[0.98]">
+<div class="w-16 h-16 flex-shrink-0 bg-primary-container text-on-primary-container rounded-2xl flex flex-col items-center justify-center shadow-md">
+<span class="font-title-lg text-title-lg leading-none">AB-</span>
+<span class="text-[10px] uppercase font-bold tracking-widest mt-1">Dibutuhkan</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-title-lg text-[18px] text-on-surface">Northwell Health</h3>
+<span class="text-on-surface-variant font-bold font-label-sm uppercase tracking-tighter bg-surface-container px-2 py-0.5 rounded">Hari Ini</span>
+</div>
+<p class="text-on-surface-variant font-body-md flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                            6.8 km jauhnya • Queens, NY
+                        </p>
+<div class="flex items-center gap-3 text-tertiary">
+<span class="material-symbols-outlined text-[18px]" data-icon="verified">verified</span>
+<span class="font-label-sm">Permintaan Terverifikasi</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- No more results indicator -->
+<div class="py-12 text-center opacity-40">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="water_drop">water_drop</span>
+<p class="font-label-sm">Tidak ada permintaan mendesak lainnya di area Anda</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface shadow-[0_-2px_8px_rgba(0,0,0,0.04)] flex justify-around items-center px-4 py-3 pb-safe rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Beranda</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-label-sm text-label-sm">Cari</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-sm text-label-sm">Aktivitas</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-container-high transition-all active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profil</span>
+</button>
+</nav>
+<script>
+        let isMapExpanded = false;
+        function toggleMap() {
+            const mapContainer = document.getElementById('map-container');
+            const mapText = document.getElementById('map-btn-text');
+            const mapIcon = document.getElementById('map-btn-icon');
+            
+            if (isMapExpanded) {
+                mapContainer.style.height = '160px'; // Initial height (h-40)
+                mapText.innerText = 'Lihat di peta';
+                mapIcon.innerText = 'map';
+                isMapExpanded = false;
+            } else {
+                mapContainer.style.height = '450px'; // Expanded height
+                mapText.innerText = 'Sembunyikan peta';
+                mapIcon.innerText = 'close_fullscreen';
+                isMapExpanded = true;
+                
+                // Scroll to map when expanded
+                setTimeout(() => {
+                    mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        }
+
+        // Add visual ripple effect on list item click
+        document.querySelectorAll('.group.relative.bg-surface-container-lowest').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.className = 'absolute inset-0 bg-primary/5 rounded-xl pointer-events-none opacity-0 transition-opacity duration-300';
+                this.appendChild(ripple);
+                requestAnimationFrame(() => { ripple.style.opacity = '1'; });
+                setTimeout(() => { ripple.style.opacity = '0'; setTimeout(() => ripple.remove(), 300); }, 200);
+            });
+        });
+    </script>
+</body></html>

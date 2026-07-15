@@ -135,7 +135,7 @@ func (service *AuthServiceImpl) Login(request dto.LoginRequest) (*dto.LoginRespo
 		return nil, ErrInactiveAccount
 	}
 
-	accessToken, err := appjwt.GenerateAccessToken(user.ID.String(), user.Email, service.jwtSecret, 24*time.Hour)
+	accessToken, err := appjwt.GenerateAccessToken(user.ID.String(), user.Email, string(user.Role), service.jwtSecret, 24*time.Hour)
 	if err != nil {
 		return nil, err
 	}

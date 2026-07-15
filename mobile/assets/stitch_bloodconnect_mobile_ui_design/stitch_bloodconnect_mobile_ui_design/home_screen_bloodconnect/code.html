@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BloodConnect - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dadada",
+                    "inverse-surface": "#2f3131",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "tertiary": "#005190",
+                    "on-surface-variant": "#5b403d",
+                    "inverse-primary": "#ffb4ac",
+                    "background": "#f9f9f9",
+                    "secondary-fixed": "#ffdad6",
+                    "on-background": "#1a1c1c",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#006ab8",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1a1c1c",
+                    "outline": "#8f706c",
+                    "on-primary-fixed": "#410003",
+                    "on-tertiary-fixed-variant": "#004881",
+                    "surface-bright": "#f9f9f9",
+                    "primary-container": "#c62828",
+                    "on-primary-fixed-variant": "#93000e",
+                    "surface-container-high": "#e8e8e8",
+                    "on-secondary-fixed-variant": "#93000d",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-error": "#ffffff",
+                    "secondary": "#b7131a",
+                    "on-tertiary-fixed": "#001c38",
+                    "primary": "#a20513",
+                    "outline-variant": "#e4beba",
+                    "tertiary-fixed": "#d3e4ff",
+                    "surface-tint": "#b91d20",
+                    "secondary-container": "#db322f",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#ffdad6",
+                    "surface-container": "#eeeeee",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#410002",
+                    "on-tertiary-container": "#dbe9ff",
+                    "surface-container-low": "#f3f3f3",
+                    "on-secondary-container": "#fffbff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#ffb4ac",
+                    "on-primary-container": "#ffe0dd",
+                    "surface": "#f9f9f9",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#a2c9ff",
+                    "surface-variant": "#e2e2e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-mobile": "16px",
+                    "unit": "8px",
+                    "container-padding-desktop": "32px",
+                    "gutter": "24px",
+                    "stack-md": "16px",
+                    "stack-lg": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Be Vietnam Pro"],
+                    "title-lg": ["Be Vietnam Pro"],
+                    "display-lg": ["Be Vietnam Pro"],
+                    "headline-lg": ["Be Vietnam Pro"],
+                    "label-sm": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "label-lg": ["Be Vietnam Pro"],
+                    "poppins": ["Poppins", "sans-serif"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm h-16 flex justify-between items-center px-container-padding-mobile">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">BloodConnect</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a friendly Southeast Asian man in his late 20s, smiling warmly. He is wearing a clean white clinical shirt. The background is a soft, out-of-focus medical office with light blue and grey tones, conveying trust and healthcare professionalism. High-key lighting highlights his kind eyes and clear complexion." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</header>
+<main class="mt-20 px-container-padding-mobile space-y-stack-lg">
+<!-- Welcome Section -->
+<section class="space-y-1">
+<h2 class="font-poppins text-headline-lg-mobile font-bold text-on-surface">Halo, Super</h2>
+<p class="font-body-md text-on-surface-variant">Bantu menyelamatkan nyawa dengan berbagi darah</p>
+</section>
+<!-- Horizontal Activity Cards -->
+<section class="overflow-x-auto hide-scrollbar -mx-container-padding-mobile px-container-padding-mobile flex gap-gutter">
+<!-- Card 1: Urgent -->
+<div class="flex-shrink-0 w-80 bg-[#E53935] rounded-xl p-5 shadow-lg text-white space-y-stack-md flex flex-col justify-between">
+<div class="space-y-stack-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-lg font-bold uppercase tracking-wider">Mendesak!</span>
+</div>
+<p class="font-body-lg font-medium">Saat ini ada 3 permintaan darah kritis di dekat Anda.</p>
+</div>
+<button class="bg-white text-[#E53935] font-label-lg py-2.5 px-6 rounded-lg font-bold w-fit transition-transform active:scale-95">
+                    Lihat Semua
+                </button>
+</div>
+<!-- Card 2: Active -->
+<div class="flex-shrink-0 w-80 bg-[#E8F5E9] rounded-xl p-5 shadow-sm border border-outline-variant space-y-stack-md flex flex-col justify-between">
+<div class="space-y-stack-sm">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-lg font-bold uppercase tracking-wider">Siap Donor?</span>
+</div>
+<p class="font-body-lg font-medium text-on-surface">21 orang sedang membutuhkan darah hari ini.</p>
+</div>
+<button class="bg-primary text-white font-label-lg py-2.5 px-6 rounded-lg font-bold w-fit transition-transform active:scale-95">
+                    Cari Golongan Darah
+                </button>
+</div>
+</section>
+<!-- Statistics Section -->
+<section class="space-y-stack-md">
+<h3 class="font-title-lg text-on-surface font-bold">Statistik Anda</h3>
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Box 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col items-center justify-center space-y-2 text-center group transition-colors hover:bg-surface-container-low">
+<div class="bg-primary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Total Donor</p>
+<p class="font-headline-lg text-on-surface">5</p>
+</div>
+</div>
+<!-- Box 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col items-center justify-center space-y-2 text-center group transition-colors hover:bg-surface-container-low">
+<div class="bg-secondary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-secondary text-3xl">calendar_month</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface-variant uppercase">Terakhir Donor</p>
+<p class="font-title-lg text-on-surface mt-1">21 Mar 2024</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Blood Type Quick Filters -->
+<section class="space-y-stack-md">
+<h3 class="font-title-lg text-on-surface font-bold">Kebutuhan Darah Terkini</h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-lg font-bold">A+</span>
+<span class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-full font-label-lg font-bold">B-</span>
+<span class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-full font-label-lg font-bold">O+</span>
+<span class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-full font-label-lg font-bold">AB+</span>
+<span class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-full font-label-lg font-bold">O-</span>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-4 flex items-center gap-4 border border-outline-variant/30">
+<div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center text-white font-bold text-2xl">A+</div>
+<div class="flex-1">
+<p class="font-title-lg font-bold">RS Umum Pusat</p>
+<p class="font-body-md text-on-surface-variant">2.4 km • Darurat</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</section>
+</main>
+<!-- Main CTA Button -->
+<div class="fixed bottom-24 left-0 w-full px-container-padding-mobile z-40">
+<button class="w-full bg-primary py-4 rounded-xl shadow-lg shadow-primary/20 text-on-primary font-poppins font-bold text-lg flex items-center justify-center gap-2 transition-transform active:scale-95 duration-200">
+<span>✨</span> Buat Permintaan Darah Baru
+        </button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface dark:bg-surface-container-highest flex justify-around items-center px-4 py-3 pb-safe shadow-[0px_-2px_8px_rgba(0,0,0,0.04)] rounded-t-xl">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-lg text-label-lg">Home</span>
+</a>
+<!-- Find -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-dim transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-lg text-label-lg">Find</span>
+</a>
+<!-- Activity -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-dim transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-lg text-label-lg">Activity</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-dim transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for active nav states
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // e.preventDefault();
+                document.querySelectorAll('nav a').forEach(l => {
+                    l.className = "flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-dim transition-all active:scale-90 duration-200";
+                    const icon = l.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                });
+                this.className = "flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 active:scale-90 duration-200";
+                const activeIcon = this.querySelector('.material-symbols-outlined');
+                if(activeIcon) activeIcon.style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+
+        // Sticky header transition
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+    </script>
+</body></html>

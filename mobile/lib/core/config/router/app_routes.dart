@@ -23,6 +23,11 @@ class AppRoutes {
   static const String createDonorPost = '$main/$donorPost/create';
   static const String donorPostDetail = '$main/$donorPost/detail/:id';
 
+  // Admin Routes
+  static const String admin = '/admin';
+  static const String adminDashboard = 'dashboard';
+  static const String adminUsers = 'users';
+
   // Other Routes
   static const String screening = '$main/screening/:id';
   static const String editProfile = '$main/edit-profile';
