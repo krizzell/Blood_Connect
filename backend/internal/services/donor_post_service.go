@@ -35,6 +35,7 @@ func (s *donorPostService) CreateDonorPost(userID uuid.UUID, req dto.CreateDonor
 		BloodType: req.BloodType,
 		Rhesus:    req.Rhesus,
 		Location:  req.Location,
+		ContactPhone: req.ContactPhone,
 		Notes:     req.Notes,
 		Status:    constants.RequestStatusPending,
 	}
@@ -112,7 +113,7 @@ func (s *donorPostService) GetPostDetail(id uuid.UUID) (*dto.DonorPostDetailResp
 		ID:           p.ID,
 		UserID:       p.UserID,
 		UserName:     p.User.FullName,
-		ContactPhone: p.User.Phone,
+		ContactPhone: p.ContactPhone,
 		BloodType:    p.BloodType,
 		Rhesus:       p.Rhesus,
 		Location:     p.Location,

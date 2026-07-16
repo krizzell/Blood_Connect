@@ -7,10 +7,11 @@ import (
 )
 
 type CreateDonorPostRequest struct {
-	BloodType string  `json:"blood_type" binding:"required"`
-	Rhesus    string  `json:"rhesus" binding:"required"`
-	Location  string  `json:"location" binding:"required,max=150"`
-	Notes     *string `json:"notes"`
+	BloodType    string  `json:"blood_type" binding:"required"`
+	Rhesus       string  `json:"rhesus" binding:"required,oneof=+ -"`
+	Location     string  `json:"location" binding:"required,max=150"`
+	ContactPhone string  `json:"contact_phone" binding:"required,max=20"`
+	Notes        *string `json:"notes" binding:"omitempty"`
 }
 
 type DonorPostResponse struct {

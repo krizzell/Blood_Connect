@@ -20,6 +20,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
+  String _selectedBloodTypeFilter = 'Semua';
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('✨', style: TextStyle(fontSize: 18)),
+                  const Text('', style: TextStyle(fontSize: 18)),
                   const SizedBox(width: 8),
                   Text(
                     'Buat Permintaan Darah Baru',
@@ -511,27 +512,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        // Quick Filters (Mock layout)
+        // Quick Filters
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            _buildBloodTypeFilter('A+', true),
-            _buildBloodTypeFilter('B-', false),
-            _buildBloodTypeFilter('O+', false),
-            _buildBloodTypeFilter('AB+', false),
+            _buildBloodTypeFilter('Semua'),
+            _buildBloodTypeFilter('A+'),
+            _buildBloodTypeFilter('B+'),
+            _buildBloodTypeFilter('O+'),
+            _buildBloodTypeFilter('AB+'),
           ],
         ),
         const SizedBox(height: 16),
         exploreState.when(
           data: (requests) {
-            if (requests.isEmpty) {
+            final filteredRequests = _selectedBloodTypeFilter == 'Semua' 
+              ? requests 
+              : requests.where((r) => '${r.bloodType}${r.rhesus}' == _selectedBloodTypeFilter).toList();
+
+            if (filteredRequests.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Belum ada kebutuhan saat ini.', style: AppTypography.bodyMedium),
+                child: Text('Belum ada kebutuhan ${_selectedBloodTypeFilter == "Semua" ? "" : "darah $_selectedBloodTypeFilter"} saat ini.', style: AppTypography.bodyMedium),
               );
             }
-            final recentRequests = requests.take(3).toList();
+            final recentRequests = filteredRequests.take(3).toList();
             return Column(
               children: recentRequests.map((request) => _buildRequestListItem(request)).toList(),
             );
@@ -548,18 +554,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildBloodTypeFilter(String type, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : AppColors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        type,
-        style: AppTypography.labelLarge.copyWith(
-          color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
-          fontWeight: FontWeight.bold,
+  Widget _buildBloodTypeFilter(String type) {
+    final isSelected = _selectedBloodTypeFilter == type;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedBloodTypeFilter = type;
+        });
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : AppColors.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          type,
+          style: AppTypography.labelLarge.copyWith(
+            color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

@@ -292,21 +292,74 @@ class _BloodRequestDetailScreenState
           final Uri url = Uri.parse('whatsapp://send?phone=$phone&text=${Uri.encodeComponent(message)}');
           final Uri webUrl = Uri.parse('https://wa.me/$phone?text=${Uri.encodeComponent(message)}');
           
-          try {
-            if (await canLaunchUrl(url)) {
-              await launchUrl(url);
-            } else {
-              await launchUrl(webUrl, mode: LaunchMode.externalApplication);
-            }
-          } catch (e) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Tidak dapat membuka WhatsApp. Pastikan aplikasi terinstall.'),
-                ),
-              );
-            }
-          }
+          // Simulasi buka WhatsApp
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) => Container(
+              padding: EdgeInsets.all(24.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.chat, color: Colors.green, size: 28),
+                      SizedBox(width: 12.w),
+                      Text('Simulasi WhatsApp', style: AppTypography.headingSmall),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                  Text('Mengirim pesan ke:', style: AppTypography.bodySmall),
+                  Text('+$phone', style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 12.h),
+                  Text('Isi Pesan:', style: AppTypography.bodySmall),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 8.h),
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Text(message, style: AppTypography.bodyMedium),
+                  ),
+                  SizedBox(height: 24.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        try {
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url);
+                          } else {
+                            await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Tidak dapat membuka WhatsApp.'),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        backgroundColor: AppColors.primary,
+                      ),
+                      child: const Text('Lanjutkan Buka Aplikasi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 16.h),

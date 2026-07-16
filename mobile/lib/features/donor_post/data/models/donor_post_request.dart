@@ -9,6 +9,7 @@ class CreateDonorPostRequest with _$CreateDonorPostRequest {
     @JsonKey(name: 'blood_type') required String bloodType,
     required String rhesus,
     required String location,
+    @JsonKey(name: 'contact_phone') required String contactPhone,
     String? notes,
   }) = _CreateDonorPostRequest;
 

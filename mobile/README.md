@@ -16,6 +16,29 @@ Tujuan utama dari BloodConnect adalah mempermudah pencarian darah dalam kondisi 
 - **Profil Pengguna** - Kelola data diri dan lihat riwayat aktivitas donor Anda.
 - **UI Modern** - Antarmuka yang bersih, intuitif, dan menggunakan Material Design 3.
 
+## Fitur Role Admin
+📊 Dashboard
+Melihat total pengguna
+Melihat jumlah request Pending & Completed
+Melihat jumlah pendonor aktif
+
+👥 Manajemen Pengguna
+Melihat daftar pengguna
+Melihat detail pengguna
+Mencari dan memfilter pengguna
+
+🩸 Manajemen Blood Request
+Melihat seluruh blood request
+Melihat detail blood request
+Mencari dan memfilter request
+
+📈 Laporan & Statistik
+Statistik jumlah donor
+Statistik berdasarkan golongan darah
+Statistik berdasarkan tingkat urgensi
+Grafik aktivitas harian, mingguan, dan bulanan
+
+
 ## 🏗️ Arsitektur
 
 ### Pola Clean Architecture

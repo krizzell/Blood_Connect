@@ -6,6 +6,7 @@ import 'package:blood_connect/core/config/theme/app_colors.dart';
 import 'package:blood_connect/core/config/theme/app_typography.dart';
 import 'package:blood_connect/features/donor_post/data/models/donor_post_request.dart';
 import 'package:blood_connect/features/donor_post/domain/notifiers/donor_post_notifier.dart';
+import 'package:blood_connect/features/authentication/domain/notifiers/auth_notifier.dart';
 import 'package:blood_connect/shared/widgets/widgets_export.dart';
 
 class CreateDonorPostScreen extends ConsumerStatefulWidget {
@@ -21,6 +22,7 @@ class _CreateDonorPostScreenState extends ConsumerState<CreateDonorPostScreen> {
 
   final _notesController = TextEditingController();
   final _locationController = TextEditingController();
+  final _contactPhoneController = TextEditingController();
 
   String _selectedBloodType = 'A';
   String _selectedRhesus = '+';
@@ -32,7 +34,20 @@ class _CreateDonorPostScreenState extends ConsumerState<CreateDonorPostScreen> {
   void dispose() {
     _notesController.dispose();
     _locationController.dispose();
+    _contactPhoneController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final authState = ref.read(authNotifierProvider);
+      final user = authState.mapOrNull(authenticated: (s) => s.user);
+      if (user != null && user.phone.isNotEmpty) {
+        _contactPhoneController.text = user.phone;
+      }
+    });
   }
 
   void _submit() async {
@@ -41,6 +56,7 @@ class _CreateDonorPostScreenState extends ConsumerState<CreateDonorPostScreen> {
         bloodType: _selectedBloodType,
         rhesus: _selectedRhesus,
         location: _locationController.text.trim(),
+        contactPhone: _contactPhoneController.text.trim(),
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
       );
 
@@ -186,6 +202,29 @@ class _CreateDonorPostScreenState extends ConsumerState<CreateDonorPostScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Lokasi tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 24.h),
+
+                // Section: Kontak Darurat
+                Text(
+                  'Kontak Darurat',
+                  style: AppTypography.headingSmall.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                AppTextFormField(
+                  controller: _contactPhoneController,
+                  label: 'Nomor WhatsApp',
+                  hintText: 'Misal: 08123456789',
+                  prefixIcon: Icons.phone_android_outlined,
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Nomor WhatsApp tidak boleh kosong';
                     }
                     return null;
                   },

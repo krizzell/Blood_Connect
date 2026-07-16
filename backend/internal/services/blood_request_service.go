@@ -61,6 +61,7 @@ func (service *BloodRequestServiceImpl) CreateBloodRequest(userID uuid.UUID, req
 		Rhesus:       constants.Rhesus(request.Rhesus),
 		BagsNeeded:   request.BagsNeeded,
 		Urgency:      constants.Urgency(request.Urgency),
+		ContactPhone: request.ContactPhone,
 		Note:         request.Notes,
 		Status:       constants.RequestStatusPending, // Automatically set to Pending
 		FulfilledAt:  nil,                            // Automatically set to NULL
@@ -85,6 +86,7 @@ func (service *BloodRequestServiceImpl) CreateBloodRequest(userID uuid.UUID, req
 		Urgency:     string(bloodRequest.Urgency),
 		Status:      string(bloodRequest.Status),
 		Notes:       bloodRequest.Note,
+		ContactPhone: bloodRequest.ContactPhone,
 		CreatedAt:   bloodRequest.CreatedAt,
 	}
 
@@ -145,7 +147,7 @@ func (service *BloodRequestServiceImpl) GetBloodRequestDetail(userID uuid.UUID, 
 		Urgency:         string(bloodRequest.Urgency),
 		Status:          string(bloodRequest.Status),
 		Notes:           bloodRequest.Note,
-		ContactPhone:    bloodRequest.User.Phone,
+		ContactPhone:    bloodRequest.ContactPhone,
 		CreatedAt:       bloodRequest.CreatedAt,
 		UpdatedAt:       bloodRequest.UpdatedAt,
 	}
@@ -206,6 +208,9 @@ func (service *BloodRequestServiceImpl) UpdateBloodRequest(userID uuid.UUID, req
 	if request.Urgency != "" {
 		bloodRequest.Urgency = constants.Urgency(request.Urgency)
 	}
+	if request.ContactPhone != "" {
+		bloodRequest.ContactPhone = request.ContactPhone
+	}
 	if request.Notes != nil {
 		bloodRequest.Note = request.Notes
 	}
@@ -229,6 +234,7 @@ func (service *BloodRequestServiceImpl) UpdateBloodRequest(userID uuid.UUID, req
 		Urgency:         string(bloodRequest.Urgency),
 		Status:          string(bloodRequest.Status),
 		Notes:           bloodRequest.Note,
+		ContactPhone:    bloodRequest.ContactPhone,
 		CreatedAt:       bloodRequest.CreatedAt,
 		UpdatedAt:       bloodRequest.UpdatedAt,
 	}

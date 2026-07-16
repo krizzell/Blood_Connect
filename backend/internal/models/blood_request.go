@@ -18,6 +18,7 @@ type BloodRequest struct {
 	Rhesus          constants.Rhesus        `gorm:"type:varchar(1);not null;column:rhesus" json:"rhesus"`
 	BagsNeeded      int                     `gorm:"not null;column:bags_needed" json:"bags_needed"`
 	Urgency         constants.Urgency       `gorm:"type:varchar(20);not null;column:urgency" json:"urgency"`
+	ContactPhone    string                  `gorm:"type:varchar(20);not null;column:contact_phone;default:''" json:"contact_phone"`
 	Note            *string                 `gorm:"type:text;column:note" json:"note"`
 	Status          constants.RequestStatus `gorm:"type:varchar(20);not null;default:'Pending';column:status" json:"status"`
 	FulfilledAt     *time.Time              `gorm:"column:fulfilled_at" json:"fulfilled_at"`

@@ -14,6 +14,7 @@ type DonorPost struct {
 	BloodType string                      `gorm:"type:varchar(3);not null;column:blood_type" json:"blood_type"`
 	Rhesus    string                      `gorm:"type:varchar(1);not null;column:rhesus" json:"rhesus"`
 	Location  string                      `gorm:"type:varchar(150);not null;column:location" json:"location"`
+	ContactPhone string                   `gorm:"type:varchar(20);not null;column:contact_phone;default:''" json:"contact_phone"`
 	Notes     *string                     `gorm:"type:text;column:notes" json:"notes"`
 	Status    constants.RequestStatus `gorm:"type:varchar(20);not null;default:'Pending';column:status" json:"status"`
 	CreatedAt time.Time                   `gorm:"column:created_at" json:"created_at"`

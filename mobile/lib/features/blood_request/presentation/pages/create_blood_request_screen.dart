@@ -11,6 +11,7 @@ import 'package:blood_connect/shared/widgets/form_fields/app_text_form_field.dar
 import 'package:blood_connect/shared/widgets/loading_widget.dart';
 import 'package:blood_connect/features/blood_request/data/data_export.dart';
 import 'package:blood_connect/features/blood_request/domain/domain_export.dart';
+import 'package:blood_connect/features/authentication/domain/notifiers/auth_notifier.dart';
 
 class CreateBloodRequestScreen extends ConsumerStatefulWidget {
   const CreateBloodRequestScreen({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _CreateBloodRequestScreenState
   final _bagsNeededController = TextEditingController();
   final _notesController = TextEditingController();
   final _locationController = TextEditingController();
+  final _contactPhoneController = TextEditingController();
 
   // Dropdowns
   String _selectedBloodType = 'A';
@@ -45,11 +47,19 @@ class _CreateBloodRequestScreenState
     _bagsNeededController.dispose();
     _notesController.dispose();
     _locationController.dispose();
+    _contactPhoneController.dispose();
     super.dispose();
   }
 
   void initState() {
     super.initState();
+    Future.microtask(() {
+      final authState = ref.read(authNotifierProvider);
+      final user = authState.mapOrNull(authenticated: (s) => s.user);
+      if (user != null && user.phone.isNotEmpty) {
+        _contactPhoneController.text = user.phone;
+      }
+    });
   }
 
   void _handleCreateBloodRequest() {
@@ -62,6 +72,7 @@ class _CreateBloodRequestScreenState
         rhesus: _selectedRhesus,
         bagsNeeded: int.parse(_bagsNeededController.text),
         urgency: _selectedUrgency,
+        contactPhone: _contactPhoneController.text.trim(),
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
@@ -185,6 +196,30 @@ class _CreateBloodRequestScreenState
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
                           return 'Lokasi wajib diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // Section: Kontak Darurat
+                    Text(
+                      'Kontak Darurat',
+                      style: AppTypography.headingSmall.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    AppTextFormField(
+                      controller: _contactPhoneController,
+                      label: 'Nomor WhatsApp',
+                      hintText: 'Contoh: 08123456789',
+                      prefixIcon: Icons.phone_android_outlined,
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Nomor WhatsApp wajib diisi';
                         }
                         return null;
                       },

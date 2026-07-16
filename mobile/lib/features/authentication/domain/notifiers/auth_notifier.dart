@@ -33,8 +33,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         accessToken: loginResponse.accessToken,
       );
     } on DioException catch (e) {
+      String errorMessage = _handleDioError(e);
+      if (e.response?.statusCode == 400 || e.response?.statusCode == 401) {
+        errorMessage = 'Email atau password salah';
+      }
       state = AuthState.error(
-        message: _handleDioError(e),
+        message: errorMessage,
       );
     } catch (e) {
       state = AuthState.error(

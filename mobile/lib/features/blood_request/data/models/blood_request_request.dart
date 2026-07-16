@@ -34,6 +34,10 @@ class BloodRequestRequest with _$BloodRequestRequest {
 
     /// Catatan tambahan (opsional)
     String? notes,
+
+    /// Nomor WhatsApp kontak darurat
+    @JsonKey(name: 'contact_phone')
+    required String contactPhone,
   }) = _BloodRequestRequest;
 
   factory BloodRequestRequest.fromJson(Map<String, dynamic> json) =>

@@ -18,6 +18,7 @@ type CreateBloodRequestResponse struct {
 	Urgency         string    `json:"urgency"`
 	Status          string    `json:"status"`
 	Notes           *string   `json:"notes"`
+	ContactPhone    string    `json:"contact_phone"`
 	CreatedAt       time.Time `json:"created_at"`
 }
 
